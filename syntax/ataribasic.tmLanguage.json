@@ -36,7 +36,7 @@
     },
     {
       "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
-      "end": "(?=:|$)",
+      "end": "(?=$)",
       "beginCaptures": {
         "0": {
           "name": "constant.numeric.line-number.ataribasic"
@@ -66,7 +66,7 @@
     },
     {
       "begin": "(?=[^\\s:])",
-      "end": "(?=:|$)",
+      "end": "(?=$)",
       "patterns": [
         {
           "include": "#code_line"
@@ -112,7 +112,7 @@
         },
         {
           "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
-          "end": "(?=:|$)",
+          "end": "(?=$)",
           "beginCaptures": {
             "0": {
               "name": "constant.numeric.line-number.ataribasic"
@@ -142,7 +142,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?=:|$)",
+          "end": "(?=$)",
           "patterns": [
             {
               "include": "#code_line"
@@ -763,7 +763,7 @@
         },
         {
           "begin": "IF",
-          "end": "(?:(?:.)|(?=:|$)|(?=$))",
+          "end": "(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.if.ataribasic"
@@ -1777,7 +1777,7 @@
           "match": "\\s+"
         },
         {
-          "begin": "[^\"]*$",
+          "begin": "[^\":]*$",
           "end": "(?=:|$)",
           "patterns": [
             {
@@ -2320,7 +2320,7 @@
         },
         {
           "begin": "THEN",
-          "end": "(?=:|$)",
+          "end": "(?=$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.then.ataribasic"
@@ -2393,7 +2393,7 @@
         },
         {
           "begin": "THEN",
-          "end": "(?=:|$)",
+          "end": "(?=$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.then.ataribasic"
@@ -2457,7 +2457,7 @@
           "match": "\\s+"
         },
         {
-          "begin": "[^\"]*(\")",
+          "begin": "[^\":]*(\")",
           "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
           "beginCaptures": {
             "1": {

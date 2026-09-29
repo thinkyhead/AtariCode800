@@ -93,6 +93,22 @@ def fix_regex(rx):
         return rx
     rx = rx.replace('\\h', '[0-9a-fA-F]')
 
+    # A negated class like `[^"]*` is bounded in Sublime by the context it lives
+    # in: contexts are per-line and pop at ':' or EOL, so `[^"]*(")` can only
+    # ever reach a quote in the CURRENT statement. TextMate has no such bound --
+    # the same pattern scans forward across the statement delimiter and pairs
+    # with a quote in a LATER statement. In `PRINT "A":PRINT "B"` that made the
+    # closing-quote rule swallow `:PRINT "`, so the second PRINT never got its
+    # keyword scope.
+    #
+    # Excluding ':' from these classes restores Sublime's implicit boundary.
+    # Only classes that already exclude the quote are touched, so character
+    # classes meant to match a literal ':' are left alone.
+    rx = re.sub(r'\[\^([^\]]*")([^\]]*)\]',
+                lambda m: '[^%s%s:]' % (m.group(1), m.group(2))
+                if ':' not in m.group(0) else m.group(0),
+                rx)
+
     # A BARE inline flag group `(?i)` applies to the REST of the pattern in
     # Oniguruma; VSCode rejects it as an invalid group. Rewrite to the scoped
     # form `(?i:...)`. Sublime also nests them inside a group that already
@@ -215,6 +231,19 @@ class Converter:
         """
         if ctx_name in self._literal_cache:
             return self._literal_cache[ctx_name]
+
+        # `code_line` is the context that OWNS the statement delimiter: it has
+        # its own `match: ':'` rule scoping it support.token.delimiter.statement
+        # before starting the next statement. If its region yielded at ':' like
+        # everything else, it would close one character early and that rule
+        # could never run -- the colon came out with no scope at all, even on a
+        # line as simple as `30 :`, and the delimiter was invisible to themes.
+        # Everything nested INSIDE it still yields, which is what hands the
+        # colon back up to here.
+        if ctx_name == 'code_line':
+            self._literal_cache[ctx_name] = False
+            return False
+
         literal = False
         for r in self.contexts.get(ctx_name) or []:
             if not isinstance(r, dict):
@@ -278,8 +307,22 @@ class Converter:
                 if not isinstance(m, str):
                     continue
                 m = fix_regex(expand_vars(m, self.variables))
-                # '$' is the prototype's own EOL pop, already the fallback.
+                # `$` is the prototype's own EOL pop, already the fallback.
                 if m == '$':
+                    continue
+                # `match: '.' / pop: true` is a CATCH-ALL, not a delimiter: it
+                # means "whatever comes next, scope it here and then leave".
+                # Used as a TextMate `end` it is disastrous, because end is
+                # tested BEFORE the body patterns -- the region closes on its
+                # own first character, so the context's scope never lands and
+                # that character is consumed unscoped. That is why `IF` never
+                # produced ctx.cmd_if and why the `N` of `NOT` vanished.
+                #
+                # The context's real terminator is the statement delimiter, so
+                # treat this exactly like the empty pop: end at ':'/EOL and let
+                # the body patterns do the scoping.
+                if m == '.':
+                    empty_pop = True
                     continue
                 # `match: '' / pop: true` is Sublime's "pop if nothing else
                 # matched" idiom: the context ends as soon as its own rules stop

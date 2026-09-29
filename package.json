@@ -372,7 +372,8 @@
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.75.0",
     "vscode-oniguruma": "^1.7.0",
-    "vscode-textmate": "^9.0.0"
+    "vscode-textmate": "^9.0.0",
+    "vscode-tmgrammar-test": "^0.1.3"
   },
   "bugs": {
     "url": "https://github.com/thinkyhead/AtariCode800/issues"
@@ -384,6 +385,7 @@
     "tokenize": "node test/tokenize.js",
     "sync": "tools/sync_tokenizer.sh",
     "sync:check": "tools/sync_tokenizer.sh --check",
-    "package": "vsce package"
+    "package": "vsce package",
+    "test:syntax": "vscode-tmgrammar-test -g syntax/ataribasic.tmLanguage.json 'test/syntax/*.lst'"
   }
 }
