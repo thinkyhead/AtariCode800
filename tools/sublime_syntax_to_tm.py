@@ -717,6 +717,23 @@ class Converter:
                 return True
         return False
 
+    def error_scope(self):
+        for r in self.contexts.get('syntax_error') or []:
+            if isinstance(r, dict) and r.get('meta_scope'):
+                return expand_vars(r['meta_scope'], self.variables)
+        return 'invalid.error.syntax.ataribasic'
+
+    def requires_more(self, dests):
+        if len(dests) != 1 or not isinstance(dests[0], str) \
+                or dests[0] == 'syntax_error':
+            return False
+        rules = [r for r in self.contexts.get(dests[0]) or []
+                 if isinstance(r, dict) and ('match' in r or 'include' in r)]
+        if any('include' in r or r.get('pop') for r in rules):
+            return False
+        return any(r.get('match') == '' and targets_of(r) == ['syntax_error']
+                   for r in rules)
+
     def bracket_closer(self, ctx_name):
         """(rule, continuation) if `ctx_name` is a bracket body: it is not
         one-shot and has a rule matching a lone ')' or ']' that `set:`s a
@@ -935,6 +952,14 @@ class Converter:
             c = self.conv_rule(r)
             if c:
                 pats.append(c)
+            # `match: '' / set: D` where D cannot end a statement (no pop, no
+            # include, only `'' -> syntax_error` as its way out): reaching
+            # ':' or EOL here is an error (`LET A`, `A`). The guarded
+            # fallback never fires on ':'/EOL, so add the error explicitly.
+            if isinstance(r, dict) and r.get('match') == '' \
+                    and self.requires_more(targets_of(r)):
+                pats.append({'match': '\\s*(?::.*|$)', 'name': self.error_scope(),
+                             '_delim_err': True})
 
         # In Sublime a `match: '' / set: syntax_error` fallback is reached only
         # when every rule ABOVE it failed at this position, and the context is

@@ -4,6 +4,10 @@
   "scopeName": "source.ataribasic.ci",
   "patterns": [
     {
+      "match": "\\s*(?::.*|$)",
+      "name": "invalid.error.syntax.ataribasic"
+    },
+    {
       "match": "\\s+"
     },
     {
@@ -80,6 +84,10 @@
     "main": {
       "contentName": "ctx.main.ataribasic",
       "patterns": [
+        {
+          "match": "\\s*(?::.*|$)",
+          "name": "invalid.error.syntax.ataribasic"
+        },
         {
           "match": "\\s+"
         },
@@ -1039,6 +1047,10 @@
       "name": "ctx.cmd_let.ataribasic",
       "patterns": [
         {
+          "match": "\\s*(?::.*|$)",
+          "name": "invalid.error.syntax.ataribasic"
+        },
+        {
           "match": "\\s+"
         },
         {
@@ -1934,6 +1946,10 @@
       "contentName": "ctx.expr_eat_modifier.ataribasic",
       "patterns": [
         {
+          "match": "\\s*(?::.*|$)",
+          "name": "invalid.error.syntax.ataribasic"
+        },
+        {
           "match": "\\s+"
         },
         {
@@ -1987,6 +2003,10 @@
     "expr_2nd_modifier": {
       "contentName": "ctx.expr_2nd_modifier.ataribasic",
       "patterns": [
+        {
+          "match": "\\s*(?::.*|$)",
+          "name": "invalid.error.syntax.ataribasic"
+        },
         {
           "match": "\\s+"
         },
