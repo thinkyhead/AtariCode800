@@ -1,5 +1,5 @@
 /**
- * AtariTools for VSCode
+ * AtariCode800 for VSCode
  *
  * Atari 8-bit development suite. This file wires up commands; the real work
  * lives in the modules under src/.
@@ -38,7 +38,7 @@ function activate(context) {
   }));
 
   context.subscriptions.push(
-    vscode.window.setStatusBarMessage('AtariTools ready', 3000)
+    vscode.window.setStatusBarMessage('AtariCode800 ready', 3000)
   );
 }
 

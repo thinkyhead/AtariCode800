@@ -29,7 +29,7 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "AtariTools",
+      "title": "AtariCode800",
       "properties": {
         "ataricode800.atasciiFont": {
           "type": "string",
@@ -123,19 +123,19 @@
     },
     "commands": [
       {
-        "category": "AtariTools",
+        "category": "AtariCode800",
         "command": "ataricode800.build",
         "title": "Build .BAS from .LST",
         "icon": "$(package)"
       },
       {
-        "category": "AtariTools",
+        "category": "AtariCode800",
         "command": "ataricode800.run",
         "title": "Build and Run in atari800",
         "icon": "$(play)"
       },
       {
-        "category": "AtariTools",
+        "category": "AtariCode800",
         "command": "ataricode800.inspect",
         "title": "Open BASIC Inspector",
         "icon": "$(search)"

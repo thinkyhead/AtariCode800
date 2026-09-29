@@ -1,5 +1,5 @@
 /**
- * AtariTools - BASIC build/run
+ * AtariCode800 - BASIC build/run
  *
  * Thin wrapper around the Python tokenizer (basic.py), which is the single
  * source of truth shared with the Sublime plugin. Nothing here reimplements
@@ -79,7 +79,7 @@ async function inspectFile(context, lstPath) {
 function activeLst() {
   const ed = vscode.window.activeTextEditor;
   if (!ed || ed.document.languageId !== 'ataribasic') {
-    vscode.window.showErrorMessage('AtariTools: open an Atari BASIC .LST/.ULST file first.');
+    vscode.window.showErrorMessage('AtariCode800: open an Atari BASIC .LST/.ULST file first.');
     return null;
   }
   return ed.document;
@@ -104,12 +104,12 @@ async function buildCurrent(context) {
 
   if (r.code !== 0) {
     vscode.window.showErrorMessage(
-      `AtariTools build failed: ${(r.stderr || r.stdout).trim().split('\n').pop()}`);
+      `AtariCode800 build failed: ${(r.stderr || r.stdout).trim().split('\n').pop()}`);
     return null;
   }
   const size = fs.existsSync(out) ? fs.statSync(out).size : 0;
   vscode.window.setStatusBarMessage(
-    `AtariTools: built ${path.basename(out)} (${size} bytes)`, 5000);
+    `AtariCode800: built ${path.basename(out)} (${size} bytes)`, 5000);
   return out;
 }
 
@@ -136,7 +136,7 @@ function stageAtascii(context, doc, hdDir) {
 
   if (r.status !== 0) {
     vscode.window.showErrorMessage(
-      `AtariTools: ATASCII conversion failed: ${
+      `AtariCode800: ATASCII conversion failed: ${
         (r.stderr || Buffer.alloc(0)).toString().trim().split('\n').pop()}`);
     return null;
   }
@@ -164,7 +164,7 @@ async function runCurrent(context) {
     target = staged;
   } else if (/\.ulst$/i.test(doc.fileName)) {
     vscode.window.showWarningMessage(
-      'AtariTools: set ataricode800.hardDrivePath so .ULST can be converted ' +
+      'AtariCode800: set ataricode800.hardDrivePath so .ULST can be converted ' +
       'to ATASCII before running.');
     return;
   }

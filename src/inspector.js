@@ -1,5 +1,5 @@
 /**
- * AtariTools - BASIC Inspector WebView
+ * AtariCode800 - BASIC Inspector WebView
  *
  * The four panes from the Tkinter prototype, in VSCode:
  *   1. the re-LISTed program (with a Compact checkbox)
@@ -122,7 +122,7 @@ async function update(context, doc) {
   } catch (e) {
     panel.webview.html =
       `<body style="font-family:monospace;padding:16px">
-         <h3>AtariTools Inspector</h3>
+         <h3>AtariCode800 Inspector</h3>
          <pre style="color:#f14c4c;white-space:pre-wrap">${esc(e.message)}</pre>
        </body>`;
   }
@@ -132,7 +132,7 @@ async function open(context) {
   const ed = vscode.window.activeTextEditor;
   if (!ed || ed.document.languageId !== 'ataribasic') {
     vscode.window.showErrorMessage(
-      'AtariTools: open an Atari BASIC .LST/.ULST file first.');
+      'AtariCode800: open an Atari BASIC .LST/.ULST file first.');
     return;
   }
   if (ed.document.isDirty) await ed.document.save();

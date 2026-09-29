@@ -1,4 +1,4 @@
-# VSCode AtariTools
+# VSCode AtariCode800
 
 The VSCode home for the **Atari 400/800** development suite: Atari BASIC,
 6502 assembly, and C. Graphics tooling (charsets, player-missile graphics,
@@ -11,27 +11,38 @@ point here is a *full suite* tailored to the 8-bit computer line and its
 hardware, with a specific vibe. Narrow focus is what makes the tooling
 better than the generic alternatives.
 
-Location: `~/Projects/Retro/6502-Tools/VSCode/AtariTools`
+Location: `~/Projects/Retro/AtariCode800` (its own repo; formerly
+`~/Projects/Retro/6502-Tools/VSCode/AtariTools`)
 
 ## Language: JavaScript (for now)
 
 Reviewed `~/Projects/Maker/VSCode/AutoBuildMarlin` as the style guide — plain
 JS, `'use strict'`, modules required at the top, WebViews served from `.html`
-files. AtariTools follows that shape (`src/extension.js` + modules). The user
+files. AtariCode800 follows that shape (`src/extension.js` + modules). The user
 is learning TypeScript and it may be a better long-term fit; when the move
 happens, the modules here are small enough to port cleanly and the
-`python -> Sublime/AtariTools/basic` seam is language-agnostic.
+`python/` tokenizer seam is language-agnostic.
 
 ## The single-source-of-truth rule
 
-`python/` is a **symlink** to `Sublime/AtariTools/basic`:
+`python/` holds a **vendored copy** of the tokenizer whose canonical home is
+`6502-Tools/Sublime/AtariTools/basic`.
+
+It used to be a symlink:
 
     VSCode/AtariTools/python -> ../../Sublime/AtariTools/basic
 
-Both editors run the SAME Python tokenizer. Never copy the .py files into the
-extension — that creates two implementations that drift. The extension shells
-out to `basic.py` (`src/basic.js`), and `basic.py --json` returns everything
-the UI needs:
+That worked in the old monorepo layout but cannot survive publication: a
+`.vsix` cannot contain a link that escapes the extension root, and a clean
+clone of this repo has no sibling to point at. So the seven files the tokenizer
+actually imports are copied in, and `tools/sync_tokenizer.sh` keeps them
+honest — `--check` reports drift and exits 1, a plain run copies and then
+proves the result still runs standalone.
+
+Both editors still run the SAME tokenizer; the copy is mechanical and one-way.
+Never edit `python/` directly — change the canonical copy and re-sync, or the
+two implementations drift. The extension shells out to `basic.py`
+(`src/basic.js`), and `basic.py --json` returns everything the UI needs:
 
     python3 basic.py --json FILE.LST
       -> { listing, listing_abbr, vnt, vvt, lines:[{line,hex}], header, error }
@@ -47,12 +58,24 @@ the UI needs:
 
 ## Commands
 
-- **AtariTools: Build** — tokenize the active `.LST` to `.BAS` (staged in the
+- **AtariCode800: Build** — tokenize the active `.LST` to `.BAS` (staged in the
   configured H: directory, else alongside the source).
-- **AtariTools: Build and Run** — build, then launch atari800 (`-turbo -basic
+- **AtariCode800: Build and Run** — build, then launch atari800 (`-turbo -basic
   -run`). Keybinding: Cmd/Ctrl+Shift+B.
-- **AtariTools: Open BASIC Inspector** — the four-pane WebView.
+- **AtariCode800: Open BASIC Inspector** — the four-pane WebView.
   Cmd/Ctrl+Shift+I. Auto-refreshes on save.
+- **AtariCode800: Got BASIC? Download a Program** — pick an Atari BASIC listing
+  from `Crossover/AtariBasic` in the `6502-Tools` repo and download it into the
+  workspace (`src/download.js`). Lists with one recursive `git/trees` request,
+  fetches from `raw.githubusercontent.com`. A view button comes later.
+
+  Two traps, both found only by running it live: the repo's default branch is
+  `master`, not `main` (hence the `master` → `main` fallback and the
+  `ataricode800.sourceBranch` setting), and git records the folder as
+  `Crossover/AtariBasic` while a case-insensitive macOS checkout shows
+  `AtariBASIC` — the GitHub API is case-sensitive, so folder matching is not.
+  Downloads are written as raw bytes: a `.LST` is ATASCII with `$9B`
+  terminators and a UTF-8 round trip would corrupt it.
 
 ## The BASIC Inspector WebView
 
@@ -98,7 +121,7 @@ Four grammars, all converted from the Sublime originals by
 | LD65 Config | `source.ld65cfg` | `.lnk .cfg` |
 
 A VSCode "AtariBASIC Syntax" extension already exists, but it was just a
-straight conversion of the Sublime plugin. AtariTools does its own port
+straight conversion of the Sublime plugin. AtariCode800 does its own port
 (`syntax/`) so it can track the Sublime grammar as it's improved.
 
 ## Build targets
@@ -257,7 +280,7 @@ If you want the look on `atari.basic` files, put it in your own
 }
 ```
 
-AtariTools only ships defaults for the language ids it declares
+AtariCode800 only ships defaults for the language ids it declares
 (`ataribasic`, `asm6502`).
 
 **Heads-up on `.bas` collisions.** Several installed extensions claim `.bas`:
@@ -270,7 +293,7 @@ AtariTools only ships defaults for the language ids it declares
 
 Which one wins on a given file is not deterministic, so if a `.bas` opens in
 the wrong mode, set it explicitly (`Change Language Mode`) or pin it per
-workspace with `files.associations`. AtariTools itself never claims `.bas` —
+workspace with `files.associations`. AtariCode800 itself never claims `.bas` —
 in this project `.bas`/`.BAS` is the *tokenized binary*, not source.
 
 ### Custom editor (possible, not yet built)

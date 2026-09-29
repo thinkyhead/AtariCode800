@@ -1,5 +1,5 @@
 /**
- * Headless smoke test for the AtariTools extension.
+ * Headless smoke test for the AtariCode800 extension.
  *
  * VSCode is not available outside the extension host, so `vscode` and the
  * local modules are stubbed; the point is to prove the real code paths work:

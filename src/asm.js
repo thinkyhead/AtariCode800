@@ -1,5 +1,5 @@
 /**
- * AtariTools - 6502 assembly / C build for the Atari 400/800
+ * AtariCode800 - 6502 assembly / C build for the Atari 400/800
  *
  * Mirrors the Sublime "Atari 800" build target (helper/Atari800-build.sh),
  * which is the real workflow:
@@ -35,7 +35,7 @@ const ASM_EXT = ['.s', '.asm', '.inc', '.a65', '.6502'];
 
 let channel = null;
 function out() {
-  if (!channel) channel = vscode.window.createOutputChannel('AtariTools');
+  if (!channel) channel = vscode.window.createOutputChannel('AtariCode800');
   return channel;
 }
 
@@ -95,7 +95,7 @@ function findStockConfig() {
  */
 async function build() {
   const ed = vscode.window.activeTextEditor;
-  if (!ed) { vscode.window.showErrorMessage('AtariTools: no active editor.'); return null; }
+  if (!ed) { vscode.window.showErrorMessage('AtariCode800: no active editor.'); return null; }
 
   const file = ed.document.fileName;
   if (ed.document.isDirty) await ed.document.save();
@@ -131,7 +131,7 @@ async function build() {
         if (!tpl) {
           const m = 'cc65 atari-asm.cfg template not found; set ataricode800.cc65CfgDir.';
           out().appendLine(`BUILD FAILED: ${m}`);
-          vscode.window.showErrorMessage(`AtariTools: ${m}`);
+          vscode.window.showErrorMessage(`AtariCode800: ${m}`);
           return null;
         }
         fs.copyFileSync(tpl, `${base}.lnk`);
@@ -150,24 +150,24 @@ async function build() {
       await runTool(cfg('ld65Path', 'ld65'), ldArgs, dir);
     } else {
       vscode.window.showErrorMessage(
-        `AtariTools: don't know how to build "${path.basename(file)}".`);
+        `AtariCode800: don't know how to build "${path.basename(file)}".`);
       return null;
     }
   } catch (e) {
     out().appendLine(`BUILD FAILED: ${e.message}`);
-    vscode.window.showErrorMessage(`AtariTools build failed: ${e.message}`);
+    vscode.window.showErrorMessage(`AtariCode800 build failed: ${e.message}`);
     return null;
   }
 
   if (!fs.existsSync(outfile)) {
     const msg = 'toolchain reported success but produced no binary';
     out().appendLine(`BUILD FAILED: ${msg}`);
-    vscode.window.showErrorMessage(`AtariTools: ${msg}`);
+    vscode.window.showErrorMessage(`AtariCode800: ${msg}`);
     return null;
   }
 
   out().appendLine(`Built ${outfile}`);
-  vscode.window.showInformationMessage(`AtariTools: built ${path.basename(outfile)}`);
+  vscode.window.showInformationMessage(`AtariCode800: built ${path.basename(outfile)}`);
   return outfile;
 }
 
@@ -196,7 +196,7 @@ async function buildAndRun() {
   const proc = cp.spawn(cfg('emulatorPath', 'atari800'), args,
     { detached: true, stdio: 'ignore' });
   proc.on('error', (e) => {
-    vscode.window.showErrorMessage(`AtariTools: ${e.code === 'ENOENT'
+    vscode.window.showErrorMessage(`AtariCode800: ${e.code === 'ENOENT'
       ? 'atari800 not found. Set ataricode800.emulatorPath.' : e.message}`);
   });
   proc.unref();
