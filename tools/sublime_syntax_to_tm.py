@@ -263,7 +263,8 @@ class Converter:
             return False
 
         literal = False
-        for r in self.contexts.get(ctx_name) or []:
+        rules = [r for r in self.contexts.get(ctx_name) or [] if isinstance(r, dict)]
+        for r in rules:
             if not isinstance(r, dict):
                 continue
             meta = r.get('meta_scope') or r.get('meta_content_scope')
@@ -457,7 +458,16 @@ class Converter:
             return None                       # becomes the enclosing region's end
 
         match_rx = fix_regex(expand_vars(rule['match'], self.variables))
-        match_rx, stripped = strip_leading_optional_ws(match_rx)
+        # "The statement ended too early" (`\s*([,;:]|$)` -> syntax_error in
+        # one_expr/two_exprs) must KEEP its leading blanks: it has to start
+        # on the space so it beats the generic whitespace skip and the
+        # region's `(?=:)` end, both of which would otherwise hand the ':'
+        # back as a normal separator (`LET A =   :` was not flagged).
+        delim_err = targets_of(rule) == ['syntax_error'] and \
+            (':' in rule['match'] or '$' in rule['match'])
+        stripped = False
+        if not delim_err:
+            match_rx, stripped = strip_leading_optional_ws(match_rx)
         if stripped:
             self.ws_stripped += 1
         scope = expand_vars(rule['scope'], self.variables) if rule.get('scope') else None
@@ -472,6 +482,18 @@ class Converter:
             if captures:
                 pat['captures'] = captures
             return pat
+
+        # "Statement ended too early": emit as a plain match that consumes
+        # the blank, the delimiter and the rest of the line with the error
+        # scope -- what Sublime's syntax_error (pop only at $) paints. A
+        # region would yield ':' back through its (?=:) end.
+        if delim_err:
+            err = 'invalid.error.syntax.ataribasic'
+            for r in self.contexts.get('syntax_error') or []:
+                if isinstance(r, dict) and r.get('meta_scope'):
+                    err = expand_vars(r['meta_scope'], self.variables)
+            return {'match': '(?:%s).*' % match_rx, 'name': err,
+                    '_delim_err': True}
 
         # `match: '' / set: syntax_error` is Sublime's last-resort fallback: it
         # fires only when no earlier rule in the context matched. A TextMate
@@ -517,6 +539,22 @@ class Converter:
             end_rx = '(?!\\G)(?<=\\S)|' + end_rx
 
         region = {'begin': match_rx, 'end': end_rx}
+        # Sublime tries a context's rules IN ORDER, and its pop is just one
+        # of them; TextMate tries a region's `end` FIRST. With the end being
+        # `(?=:|$)`, a body rule for the delimiter (`one_expr`'s "statement
+        # ended before any value" -> syntax_error) could never win. Trying
+        # the end last restores Sublime's order -- but ONLY where the end
+        # merely yields at the delimiter. A real terminator (a string's
+        # closing quote) must stay first, or body rules swallow it.
+        core = end_rx.replace('(?!\\G)(?<=\\S)|', '', 1)
+        if False:  # applyEndPatternLast: tried and rejected, see below
+            # Sublime tries a context's rules in order; TextMate tries `end`
+            # first. applyEndPatternLast looked like the fix for delimiter
+            # errors, but the one-shot `(?!\G)(?<=\S)` close MUST be tried
+            # first -- delayed, body rules re-claimed the ':' after every
+            # finished expression (`A=1:B=2` went red). The real fix is in
+            # conv_rule: keep the error rule's own leading \s*.
+            region['applyEndPatternLast'] = 1
 
         # CRITICAL: the rule's scope belongs to the matched text only. Using it
         # as the region `name` would apply it to the entire region.
@@ -653,6 +691,19 @@ class Converter:
                 m = fix_regex(expand_vars(m, self.variables))
                 out.append(strip_leading_optional_ws(m)[0])
         return out
+
+    def has_delimiter_error(self, ctx_name):
+        """Context's OWN first rules say "statement ended too early": a
+        `set: syntax_error` whose match can hit ':' or end of line. Only
+        these regions get applyEndPatternLast -- applied broadly it lets
+        zero-width body rules re-open at EOL forever."""
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict) or 'match' not in r:
+                continue
+            if targets_of(r) == ['syntax_error'] and \
+                    (':' in r['match'] or '$' in r['match']):
+                return True
+        return False
 
     def is_oneshot(self, ctx_name, _seen=None):
         """True if every rule reachable in `ctx_name` transitions (set/pop).
@@ -907,6 +958,14 @@ def convert(src, scope_name, display_name):
                 c = conv.conv_rule(r)
                 if c:
                     entry['patterns'].insert(0, c)
+            # ...except a "statement ended too early" error, which starts on
+            # the blank itself and must see it before the skip eats it.
+            errs = [p for p in entry['patterns'] if p.get('_delim_err')]
+            if errs:
+                entry['patterns'] = errs + [p for p in entry['patterns']
+                                            if not p.get('_delim_err')]
+        for p in entry['patterns']:
+            p.pop('_delim_err', None)
 
         # Statement regions end by LOOKING at ':' without consuming it, so the
         # statement-list context must consume and scope the delimiter itself --
