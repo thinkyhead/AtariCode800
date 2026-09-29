@@ -59,7 +59,7 @@ the UI needs:
 The four panes from the Tkinter prototype (`tkbasic.py`), now in VSCode:
 
 1. **Listing** — the re-LISTed program, with a **Compact** checkbox
-   (`-a`/abbrev vs full). Toggling persists to `ataritools.compactListing`.
+   (`-a`/abbrev vs full). Toggling persists to `ataricode800.compactListing`.
 2. **Tokenized (hex)** — per-line hex of the on-disk `.BAS` image, plus the
    14-byte header.
 3. **VNT** — variable names.
@@ -104,7 +104,7 @@ straight conversion of the Sublime plugin. AtariTools does its own port
 ## Build targets
 
 BASIC goes through the Python tokenizer; assembly and C go to **cc65**.
-`ataritools.build` dispatches on the active document's language.
+`ataricode800.build` dispatches on the active document's language.
 
 Assembly follows the Sublime `Atari 800` target
 (`helper/Atari800-build.sh`) — the real workflow:
@@ -172,12 +172,12 @@ says; fixing the grammar is Sublime-side work that then flows here.
 
 | key | default | meaning |
 |---|---|---|
-| `ataritools.pythonPath` | `python3` | interpreter for the tokenizer |
-| `ataritools.basicToolPath` | (bundled/shared) | explicit path to basic.py |
-| `ataritools.emulatorPath` | `atari800` | emulator for Run |
-| `ataritools.hardDrivePath` | (source dir) | H: dir for staged .BAS |
-| `ataritools.turbo` | true | pass `-turbo` to atari800 |
-| `ataritools.compactListing` | false | default Inspector listing mode |
+| `ataricode800.pythonPath` | `python3` | interpreter for the tokenizer |
+| `ataricode800.basicToolPath` | (bundled/shared) | explicit path to basic.py |
+| `ataricode800.emulatorPath` | `atari800` | emulator for Run |
+| `ataricode800.hardDrivePath` | (source dir) | H: dir for staged .BAS |
+| `ataricode800.turbo` | true | pass `-turbo` to atari800 |
+| `ataricode800.compactListing` | false | default Inspector listing mode |
 
 ## Themes
 
@@ -322,7 +322,7 @@ configured H: drive as an 8.3 `.LST` before the emulator is launched.
 
 This is what makes the Unicode workflow honest -- you edit readable `.ULST`,
 and the Atari receives true ATASCII with `$9B` line terminators. Requires
-`ataritools.hardDrivePath`; running a `.ULST` without it warns rather than
+`ataricode800.hardDrivePath`; running a `.ULST` without it warns rather than
 silently feeding Unicode to the emulator.
 
 ## Roadmap

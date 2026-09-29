@@ -29,7 +29,7 @@ real Atari BASIC ROM.
 | `atari800` | runs programs | optional |
 | `ca65`, `ld65` | 6502 assembly | from cc65; optional |
 
-Set `ataritools.pythonPath` if `python3` is not on your `PATH`.
+Set `ataricode800.pythonPath` if `python3` is not on your `PATH`.
 
 ## File extensions
 

@@ -34,7 +34,7 @@ const TYPE_NAMES = {
 
 function render(data, fileName) {
   const compact = vscode.workspace
-    .getConfiguration('ataritools').get('compactListing', false);
+    .getConfiguration('ataricode800').get('compactListing', false);
 
   const hexRows = (data.lines || []).map((l) => {
     const bytes = (l.hex.match(/../g) || []).join(' ');
@@ -139,7 +139,7 @@ async function open(context) {
 
   if (!panel) {
     panel = vscode.window.createWebviewPanel(
-      'ataritools.inspector', 'BASIC Inspector',
+      'ataricode800.inspector', 'BASIC Inspector',
       vscode.ViewColumn.Beside, { enableScripts: true, retainContextWhenHidden: true });
 
     panel.onDidDispose(() => { panel = null; currentFile = null; },
@@ -147,7 +147,7 @@ async function open(context) {
 
     panel.webview.onDidReceiveMessage((msg) => {
       if (msg && msg.type === 'compact') {
-        vscode.workspace.getConfiguration('ataritools')
+        vscode.workspace.getConfiguration('ataricode800')
           .update('compactListing', msg.value, true);
       }
     }, null, context.subscriptions);

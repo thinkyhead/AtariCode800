@@ -92,7 +92,7 @@ if (data) {
      path.join(ROOT, 'src'));
 
   const html = m.exports._render(data, 'test_simple.LST');
-  fs.writeFileSync('/tmp/ataritools-inspector.html', html);
+  fs.writeFileSync('/tmp/ataricode800-inspector.html', html);
 
   const panes = [
     ['Listing pane', '<h2>Listing</h2>'],
@@ -104,7 +104,7 @@ if (data) {
     ['variable A$ listed', 'A$'],
   ];
   for (const [label, needle] of panes) check(label, html.includes(needle));
-  console.log('\n  preview written to /tmp/ataritools-inspector.html');
+  console.log('\n  preview written to /tmp/ataricode800-inspector.html');
 }
 
 // --- 2b. .ULST is treated as Atari BASIC source ------------------------
@@ -112,7 +112,7 @@ if (data) {
 // basic.py dispatches on extension, so a missing .ulst case silently sent
 // the file down the tokenized-BAS path and failed.
 {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ataritools-u-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ataricode800-u-'));
   const ulst = path.join(tmp, 'UTEST.ULST');
   fs.copyFileSync(lst, ulst);
   try {
@@ -181,7 +181,7 @@ sys.stdout.write(json.dumps(${JSON.stringify(sample)}.translate(m)))
 // The Atari speaks ATASCII with $9B line terminators. A Unicode .ULST must be
 // converted before it will run, so prove the converter we shell out to does it.
 {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ataritools-a-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ataricode800-a-'));
   const src = path.join(tmp, 'CONV.ULST');
   fs.writeFileSync(src,
     '10 PRINT "HELLO"\n; host only\n# hash only\n. legacy only\n20 GOTO 10\n', 'utf8');
@@ -322,7 +322,7 @@ sys.stdout.write(json.dumps(${JSON.stringify(sample)}.translate(m)))
 // Prove the exact ca65 + ld65 sequence src/asm.js issues produces a real
 // Atari binary, rather than trusting the toolchain is present and correct.
 {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ataritools-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ataricode800-'));
   const src = path.join(tmp, 'hello.asm');
   const obj = path.join(tmp, 'hello.o');
   const bin = path.join(tmp, 'hello.bin');
@@ -375,7 +375,43 @@ sys.stdout.write(json.dumps(${JSON.stringify(sample)}.translate(m)))
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
-console.log(failures === 0
-  ? '\nAll smoke checks passed.'
-  : `\n${failures} check(s) FAILED.`);
-process.exit(failures === 0 ? 0 : 1);
+// --- 4. the "Got BASIC?" downloader -----------------------------------
+// Network-dependent, so it SKIPs rather than fails when offline. Guards the
+// two things that actually broke in development: the repo's default branch is
+// master (not main), and git records the folder as 'Crossover/AtariBasic'
+// while a case-insensitive macOS checkout shows 'AtariBASIC' -- the GitHub
+// API is case-sensitive, so the match must not be.
+{
+  const dl = require(path.join(ROOT, 'src', 'download.js'));
+  check('download module exports gotBasic', typeof dl.gotBasic === 'function');
+
+  const url = dl.rawUrl('master', 'Crossover/AtariBasic/MENU.ULST');
+  check('raw URL is well formed',
+    url === 'https://raw.githubusercontent.com/thinkyhead/6502-Tools/master/'
+          + 'Crossover/AtariBasic/MENU.ULST', url);
+
+  const done = (async () => {
+    let items;
+    try {
+      items = await dl.loadListings('master');
+    } catch (e) {
+      skip('lists BASIC programs from GitHub', e.message.slice(0, 60));
+      return;
+    }
+    check('lists BASIC programs from GitHub', items.length > 0,
+      `${items.length} listings`);
+    check('listings carry a folder grouping',
+      new Set(items.map((i) => i.folder)).size > 1,
+      [...new Set(items.map((i) => i.folder || '(root)'))].join(', '));
+    check('only .LST/.ULST are offered',
+      items.every((i) => /\.(ULST|LST)$/i.test(i.label)));
+  })();
+
+  // The suite is otherwise synchronous; settle this before reporting.
+  done.then(() => {
+    console.log(failures === 0
+      ? '\nAll smoke checks passed.'
+      : `\n${failures} check(s) FAILED.`);
+    process.exit(failures === 0 ? 0 : 1);
+  });
+}

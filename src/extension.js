@@ -12,6 +12,7 @@ const basic = require('./basic');
 const asm = require('./asm');
 const inspector = require('./inspector');
 const atascii = require('./atascii');
+const download = require('./download');
 
 /** Build/Run dispatch on the active document's language.
  *  BASIC goes through the Python tokenizer; asm and C go to the cc65 tools. */
@@ -24,9 +25,10 @@ function activate(context) {
   const sub = context.subscriptions;
   const reg = (id, fn) => sub.push(vscode.commands.registerCommand(id, fn));
 
-  reg('ataritools.build', () => (isBasic() ? basic.buildCurrent(context) : asm.build()));
-  reg('ataritools.run', () => (isBasic() ? basic.runCurrent(context) : asm.buildAndRun()));
-  reg('ataritools.inspect', () => inspector.open(context));
+  reg('ataricode800.build', () => (isBasic() ? basic.buildCurrent(context) : asm.build()));
+  reg('ataricode800.run', () => (isBasic() ? basic.runCurrent(context) : asm.buildAndRun()));
+  reg('ataricode800.inspect', () => inspector.open(context));
+  reg('ataricode800.gotBasic', () => download.gotBasic(context));
 
   atascii.register(context);
 

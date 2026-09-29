@@ -1,5 +1,5 @@
 {
-  "name": "ataritools",
+  "name": "ataricode800",
   "displayName": "AtariCode800",
   "description": "Atari 8-bit development suite: BASIC tokenizer, LIST/hex/VNT-VVT inspector, 6502 assembly, and graphics tooling.",
   "version": "0.1.0",
@@ -31,22 +31,37 @@
       "type": "object",
       "title": "AtariTools",
       "properties": {
-        "ataritools.pythonPath": {
+        "ataricode800.atasciiFont": {
           "type": "string",
-          "default": "python3",
-          "description": "Python 3 interpreter used to run the Atari BASIC tokenizer."
+          "default": "AtariClassic-Regular, 'Atari Classic', 'EightBit Atari', monospace",
+          "description": "Font stack for the ATASCII character palettes."
         },
-        "ataritools.basicToolPath": {
+        "ataricode800.basicToolPath": {
           "type": "string",
           "default": "",
           "description": "Path to basic.py. Leave empty to use the copy bundled with the extension."
         },
-        "ataritools.emulatorPath": {
+        "ataricode800.ca65Path": {
           "type": "string",
-          "default": "atari800",
-          "description": "Path to the atari800 executable."
+          "default": "ca65",
+          "description": "Path to the ca65 assembler (cc65 toolchain)."
         },
-        "ataritools.emulatorModel": {
+        "ataricode800.cc65CfgDir": {
+          "type": "string",
+          "default": "",
+          "description": "Directory holding cc65's stock .cfg templates. Empty auto-detects MacPorts/Homebrew."
+        },
+        "ataricode800.cl65Path": {
+          "type": "string",
+          "default": "cl65",
+          "description": "Path to cl65, the cc65 compile-and-link driver (used for C)."
+        },
+        "ataricode800.compactListing": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the abbreviated (compact) listing in the Inspector by default."
+        },
+        "ataricode800.emulatorModel": {
           "type": "string",
           "default": "-atari",
           "enum": [
@@ -59,178 +74,179 @@
           ],
           "description": "Machine to emulate. -atari is the 400/800; -xl is the 800XL."
         },
-        "ataritools.emulatorOptions": {
+        "ataricode800.emulatorOptions": {
           "type": "string",
           "default": "-win-width 1200 -win-height 900 -colors-preset deep-black",
           "description": "Extra atari800 options (display, colors, sound)."
         },
-        "ataritools.hardDrivePath": {
+        "ataricode800.emulatorPath": {
+          "type": "string",
+          "default": "atari800",
+          "description": "Path to the atari800 executable."
+        },
+        "ataricode800.githubToken": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Optional GitHub token, used only to raise the API rate limit when listing programs. The repo is public, so this is not required."
+        },
+        "ataricode800.hardDrivePath": {
           "type": "string",
           "default": "",
           "description": "H: device directory the emulator reads. Built .BAS files are staged here."
         },
-        "ataritools.turbo": {
-          "type": "boolean",
-          "default": true,
-          "description": "Run the emulator with -turbo."
-        },
-        "ataritools.ca65Path": {
-          "type": "string",
-          "default": "ca65",
-          "description": "Path to the ca65 assembler (cc65 toolchain)."
-        },
-        "ataritools.ld65Path": {
+        "ataricode800.ld65Path": {
           "type": "string",
           "default": "ld65",
           "description": "Path to the ld65 linker (cc65 toolchain)."
         },
-        "ataritools.cl65Path": {
+        "ataricode800.pythonPath": {
           "type": "string",
-          "default": "cl65",
-          "description": "Path to cl65, the cc65 compile-and-link driver (used for C)."
+          "default": "python3",
+          "description": "Python 3 interpreter used to run the Atari BASIC tokenizer."
         },
-        "ataritools.targetLib": {
+        "ataricode800.sourceBranch": {
+          "type": "string",
+          "default": "",
+          "description": "Branch of thinkyhead/6502-Tools to fetch BASIC programs from. Empty tries master, then main."
+        },
+        "ataricode800.targetLib": {
           "type": "string",
           "default": "atari.lib",
           "description": "cc65 target library linked with ld65. Resolves __EXEHDR__/__AUTOSTART__; clear it for a freestanding link."
         },
-        "ataritools.cc65CfgDir": {
-          "type": "string",
-          "default": "",
-          "description": "Directory holding cc65's stock .cfg templates. Empty auto-detects MacPorts/Homebrew."
-        },
-        "ataritools.compactListing": {
+        "ataricode800.turbo": {
           "type": "boolean",
-          "default": false,
-          "description": "Show the abbreviated (compact) listing in the Inspector by default."
-        },
-        "ataritools.atasciiFont": {
-          "type": "string",
-          "default": "AtariClassic-Regular, 'Atari Classic', 'EightBit Atari', monospace",
-          "description": "Font stack for the ATASCII character palettes."
+          "default": true,
+          "description": "Run the emulator with -turbo."
         }
       }
     },
     "commands": [
       {
         "category": "AtariTools",
-        "command": "ataritools.build",
+        "command": "ataricode800.build",
         "title": "Build .BAS from .LST",
         "icon": "$(package)"
       },
       {
         "category": "AtariTools",
-        "command": "ataritools.run",
+        "command": "ataricode800.run",
         "title": "Build and Run in atari800",
         "icon": "$(play)"
       },
       {
         "category": "AtariTools",
-        "command": "ataritools.inspect",
+        "command": "ataricode800.inspect",
         "title": "Open BASIC Inspector",
         "icon": "$(search)"
       },
       {
         "category": "ATASCII",
-        "command": "ataritools.atascii.insertInverted",
+        "command": "ataricode800.atascii.insertInverted",
         "title": "Insert Inverted Character\u2026"
       },
       {
         "category": "ATASCII",
-        "command": "ataritools.atascii.insertSpecial",
+        "command": "ataricode800.atascii.insertSpecial",
         "title": "Insert Special Character\u2026"
       },
       {
         "category": "ATASCII",
-        "command": "ataritools.atascii.insertDrawing",
+        "command": "ataricode800.atascii.insertDrawing",
         "title": "Insert Drawing Character\u2026"
       },
       {
         "category": "ATASCII",
-        "command": "ataritools.atascii.invertSelection",
+        "command": "ataricode800.atascii.invertSelection",
         "title": "Invert Selected Text"
+      },
+      {
+        "command": "ataricode800.gotBasic",
+        "title": "Got BASIC? Download a Program",
+        "category": "AtariCode800",
+        "icon": "$(cloud-download)"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "ataritools.inspect",
+          "command": "ataricode800.inspect",
           "when": "resourceLangId == ataribasic",
           "group": "navigation@1"
         },
         {
-          "command": "ataritools.run",
+          "command": "ataricode800.run",
           "when": "resourceLangId == ataribasic",
           "group": "navigation@2"
         }
       ],
       "commandPalette": [
         {
-          "command": "ataritools.build",
+          "command": "ataricode800.build",
           "when": "resourceLangId == ataribasic"
         },
         {
-          "command": "ataritools.run",
+          "command": "ataricode800.run",
           "when": "resourceLangId == ataribasic"
         },
         {
-          "command": "ataritools.inspect",
+          "command": "ataricode800.inspect",
           "when": "resourceLangId == ataribasic"
         }
       ],
       "editor/context": [
         {
-          "command": "ataritools.atascii.insertInverted",
+          "command": "ataricode800.atascii.insertInverted",
           "when": "resourceLangId == ataribasic",
-          "group": "ataritools@1"
+          "group": "ataricode800@1"
         },
         {
-          "command": "ataritools.atascii.insertSpecial",
+          "command": "ataricode800.atascii.insertSpecial",
           "when": "resourceLangId == ataribasic",
-          "group": "ataritools@1"
+          "group": "ataricode800@1"
         },
         {
-          "command": "ataritools.atascii.insertDrawing",
+          "command": "ataricode800.atascii.insertDrawing",
           "when": "resourceLangId == ataribasic",
-          "group": "ataritools@1"
+          "group": "ataricode800@1"
         },
         {
-          "command": "ataritools.atascii.invertSelection",
+          "command": "ataricode800.atascii.invertSelection",
           "when": "resourceLangId == ataribasic",
-          "group": "ataritools@1"
+          "group": "ataricode800@1"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "ataritools.run",
+        "command": "ataricode800.run",
         "key": "ctrl+shift+b",
         "mac": "cmd+shift+b",
         "when": "resourceLangId == ataribasic"
       },
       {
-        "command": "ataritools.inspect",
+        "command": "ataricode800.inspect",
         "key": "ctrl+shift+i",
         "mac": "cmd+shift+i",
         "when": "resourceLangId == ataribasic"
       },
       {
-        "command": "ataritools.atascii.insertInverted",
+        "command": "ataricode800.atascii.insertInverted",
         "key": "ctrl+shift+a ctrl+shift+a",
         "when": "editorTextFocus && resourceLangId == ataribasic"
       },
       {
-        "command": "ataritools.atascii.insertSpecial",
+        "command": "ataricode800.atascii.insertSpecial",
         "key": "ctrl+shift+a ctrl+shift+s",
         "when": "editorTextFocus && resourceLangId == ataribasic"
       },
       {
-        "command": "ataritools.atascii.insertDrawing",
+        "command": "ataricode800.atascii.insertDrawing",
         "key": "ctrl+shift+a ctrl+shift+d",
         "when": "editorTextFocus && resourceLangId == ataribasic"
       },
       {
-        "command": "ataritools.atascii.invertSelection",
+        "command": "ataricode800.atascii.invertSelection",
         "key": "ctrl+shift+a ctrl+shift+i",
         "when": "editorTextFocus && resourceLangId == ataribasic"
       }

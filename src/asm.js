@@ -40,7 +40,7 @@ function out() {
 }
 
 function cfg(key, dflt) {
-  return vscode.workspace.getConfiguration('ataritools').get(key, dflt);
+  return vscode.workspace.getConfiguration('ataricode800').get(key, dflt);
 }
 
 /** Run one tool, streaming its output. Rejects with a useful message. */
@@ -129,7 +129,7 @@ async function build() {
         }
         const tpl = findStockConfig();
         if (!tpl) {
-          const m = 'cc65 atari-asm.cfg template not found; set ataritools.cc65CfgDir.';
+          const m = 'cc65 atari-asm.cfg template not found; set ataricode800.cc65CfgDir.';
           out().appendLine(`BUILD FAILED: ${m}`);
           vscode.window.showErrorMessage(`AtariTools: ${m}`);
           return null;
@@ -197,7 +197,7 @@ async function buildAndRun() {
     { detached: true, stdio: 'ignore' });
   proc.on('error', (e) => {
     vscode.window.showErrorMessage(`AtariTools: ${e.code === 'ENOENT'
-      ? 'atari800 not found. Set ataritools.emulatorPath.' : e.message}`);
+      ? 'atari800 not found. Set ataricode800.emulatorPath.' : e.message}`);
   });
   proc.unref();
 }

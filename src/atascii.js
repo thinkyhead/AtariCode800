@@ -107,12 +107,12 @@ function showPalette(context, which, title) {
     return;
   }
 
-  const font = vscode.workspace.getConfiguration('ataritools')
+  const font = vscode.workspace.getConfiguration('ataricode800')
     .get('atasciiFont',
       "AtariClassic-Regular, 'Atari Classic', 'EightBit Atari', monospace");
 
   const panel = vscode.window.createWebviewPanel(
-    'ataritools.atascii', title,
+    'ataricode800.atascii', title,
     { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
     { enableScripts: true, retainContextWhenHidden: true });
 
@@ -136,13 +136,13 @@ function register(context) {
   const reg = (id, fn) => context.subscriptions.push(
     vscode.commands.registerCommand(id, fn));
 
-  reg('ataritools.atascii.insertInverted',
+  reg('ataricode800.atascii.insertInverted',
     () => showPalette(context, 'inverted', 'ATASCII: Inverted'));
-  reg('ataritools.atascii.insertSpecial',
+  reg('ataricode800.atascii.insertSpecial',
     () => showPalette(context, 'special', 'ATASCII: Special'));
-  reg('ataritools.atascii.insertDrawing',
+  reg('ataricode800.atascii.insertDrawing',
     () => showPalette(context, 'drawing', 'ATASCII: Drawing'));
-  reg('ataritools.atascii.invertSelection',
+  reg('ataricode800.atascii.invertSelection',
     () => invertSelection(context));
 }
 

@@ -14,12 +14,12 @@ const path = require('path');
 const fs = require('fs');
 
 function config() {
-  return vscode.workspace.getConfiguration('ataritools');
+  return vscode.workspace.getConfiguration('ataricode800');
 }
 
 /**
  * Locate basic.py. Preference order:
- *   1. the ataritools.basicToolPath setting
+ *   1. the ataricode800.basicToolPath setting
  *   2. the copy bundled in the extension (python/basic.py)
  *   3. a sibling 6502-Tools checkout, for shared-development convenience
  *
@@ -48,7 +48,7 @@ function runTool(context, args) {
     const tool = basicToolPath(context);
     if (!tool) {
       reject(new Error(
-        'Could not find basic.py. Set "ataritools.basicToolPath" in settings.'));
+        'Could not find basic.py. Set "ataricode800.basicToolPath" in settings.'));
       return;
     }
     const py = config().get('pythonPath', 'python3');
@@ -164,7 +164,7 @@ async function runCurrent(context) {
     target = staged;
   } else if (/\.ulst$/i.test(doc.fileName)) {
     vscode.window.showWarningMessage(
-      'AtariTools: set ataritools.hardDrivePath so .ULST can be converted ' +
+      'AtariTools: set ataricode800.hardDrivePath so .ULST can be converted ' +
       'to ATASCII before running.');
     return;
   }
