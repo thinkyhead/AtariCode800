@@ -1,0 +1,24 @@
+# Files excluded from the packaged .vsix.
+#
+# Keep: src/, python/, syntax/, themes/, media/, package.json, README.md,
+# LICENSE, *language-configuration.json -- everything the extension needs
+# at run time.
+
+.vscode/**
+.github/**
+.git/**
+.gitignore
+.vscodeignore
+
+# Development-only
+test/**
+tools/**
+EXTENSION.md
+node_modules/**
+jsconfig.json
+
+# Caches and build leftovers
+**/__pycache__/**
+**/*.pyc
+**/.DS_Store
+*.vsix

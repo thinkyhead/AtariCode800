@@ -1,0 +1,1462 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Atari BASIC (CI)",
+  "scopeName": "source.ataribasic.ci",
+  "patterns": [
+    {
+      "match": "$"
+    },
+    {
+      "match": "^(.{254})(\\S.+?)\\s*$",
+      "captures": {
+        "1": {
+          "name": "invalid.warning.line-too-long.ataribasic"
+        },
+        "2": {
+          "name": "invalid.error.line-too-long.ataribasic"
+        }
+      }
+    },
+    {
+      "match": "\\s+"
+    },
+    {
+      "begin": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))\\s*ERROR\\s*-.*",
+      "end": "$",
+      "name": "invalid.error.line.ataribasic",
+      "contentName": "invalid.error.syntax.ataribasic"
+    },
+    {
+      "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+      "name": "constant.numeric.line-number.ataribasic"
+    },
+    {
+      "begin": ";|//|\\#",
+      "end": "$",
+      "name": "comment.host.ataribasic"
+    },
+    {
+      "match": ""
+    }
+  ],
+  "repository": {
+    "prototype": {
+      "patterns": [
+        {
+          "match": "\\s+"
+        },
+        {
+          "match": "$"
+        }
+      ]
+    },
+    "main": {
+      "patterns": [
+        {
+          "match": "$"
+        },
+        {
+          "match": "^(.{254})(\\S.+?)\\s*$",
+          "captures": {
+            "1": {
+              "name": "invalid.warning.line-too-long.ataribasic"
+            },
+            "2": {
+              "name": "invalid.error.line-too-long.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "\\s+"
+        },
+        {
+          "begin": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))\\s*ERROR\\s*-.*",
+          "end": "$",
+          "name": "invalid.error.line.ataribasic",
+          "contentName": "invalid.error.syntax.ataribasic"
+        },
+        {
+          "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+          "name": "constant.numeric.line-number.ataribasic"
+        },
+        {
+          "begin": ";|//|\\#",
+          "end": "$",
+          "name": "comment.host.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "code_line": {
+      "patterns": [
+        {
+          "match": "(?i:(RE[M.]|R?\\.))",
+          "name": "keyword.rem.ataribasic"
+        },
+        {
+          "begin": "(?i:(D(AT[A.]|A?\\.))\\s*)",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.data.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "match": "([^,]+?)(\\s*$)?",
+              "name": "entity.literal.string.data.ataribasic"
+            },
+            {
+              "match": "\\,",
+              "name": "support.token.delimiter.data.ataribasic"
+            }
+          ]
+        },
+        {
+          "match": "(?i:RES(TOR[E.]|(TO?)?\\.))",
+          "name": "keyword.restore.ataribasic"
+        },
+        {
+          "match": "(CLR)|(CON[T.])|(DEG)|(POP)|(RAD)|(CLOAD)|(CS(AV[E.]|A?\\.))",
+          "captures": {
+            "1": {
+              "name": "keyword.clr.ataribasic"
+            },
+            "2": {
+              "name": "keyword.cont.ataribasic"
+            },
+            "3": {
+              "name": "keyword.deg.ataribasic"
+            },
+            "4": {
+              "name": "keyword.pop.ataribasic"
+            },
+            "5": {
+              "name": "keyword.rad.ataribasic"
+            },
+            "6": {
+              "name": "keyword.cload.ataribasic"
+            },
+            "7": {
+              "name": "keyword.csave.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(B(YE|Y?\\.))|(DOS)|(END)|(NEW)|(STO[P.])|(RET(UR[N.]|U?\\.))",
+          "captures": {
+            "1": {
+              "name": "keyword.bye.ataribasic"
+            },
+            "3": {
+              "name": "keyword.dos.ataribasic"
+            },
+            "4": {
+              "name": "keyword.end.ataribasic"
+            },
+            "5": {
+              "name": "keyword.new.ataribasic"
+            },
+            "6": {
+              "name": "keyword.stop.ataribasic"
+            },
+            "7": {
+              "name": "keyword.return.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "RU[N.]",
+          "name": "keyword.run.ataribasic"
+        },
+        {
+          "match": "(?i:(\\?|PR(IN[T.]|N?.))\\s*(#))",
+          "captures": {
+            "1": {
+              "name": "keyword.print.ataribasic"
+            },
+            "3": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\?|PR(INT|(IN?)?\\.))",
+          "name": "keyword.print.ataribasic"
+        },
+        {
+          "match": "(?i:(LP(RINT|(R(IN?)?)?\\.)))",
+          "name": "keyword.lprint.ataribasic"
+        },
+        {
+          "match": "(?i:(I(NPU[T.]|(NP?)?\\.))\\s*(#))",
+          "captures": {
+            "1": {
+              "name": "keyword.input.ataribasic"
+            },
+            "4": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:I(NPU[T.]|(NP?)?\\.))",
+          "name": "keyword.input.ataribasic"
+        },
+        {
+          "match": "(?i:(CL(OS[E.]|O?\\.))\\s*(#))",
+          "captures": {
+            "1": {
+              "name": "keyword.close.ataribasic"
+            },
+            "3": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:(O(PE[.N]|P?\\.))\\s*(#))",
+          "captures": {
+            "1": {
+              "name": "keyword.open.ataribasic"
+            },
+            "3": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:((GET)|(PUT)|(ST(ATU[S.]|(AT?)?\\.)))\\s*(#))",
+          "captures": {
+            "2": {
+              "name": "keyword.get.ataribasic"
+            },
+            "3": {
+              "name": "keyword.put.ataribasic"
+            },
+            "4": {
+              "name": "keyword.status.ataribasic"
+            },
+            "7": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:XIO)",
+          "name": "keyword.xio.ataribasic"
+        },
+        {
+          "match": "(?i:((NO(T[E.]|\\.))|(P(OIN[T.]|(OI?)?\\.)))\\s*(#))",
+          "captures": {
+            "2": {
+              "name": "keyword.note.ataribasic"
+            },
+            "4": {
+              "name": "keyword.point.ataribasic"
+            },
+            "7": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:COM)",
+          "name": "keyword.com.ataribasic"
+        },
+        {
+          "match": "(?i:DIM)",
+          "name": "keyword.dim.ataribasic"
+        },
+        {
+          "match": "(?i:F(OR|O?\\.))",
+          "name": "keyword.for.ataribasic"
+        },
+        {
+          "match": "(?i:N(EX[T.]|E?\\.))",
+          "name": "keyword.next.ataribasic"
+        },
+        {
+          "match": "(?i:T(RA[P.]|R?\\.))",
+          "name": "keyword.trap.ataribasic"
+        },
+        {
+          "match": "(?i:POK[E.])",
+          "name": "keyword.poke.ataribasic"
+        },
+        {
+          "match": "(?i:C(OLO[R.]|(OL?)?\\.))",
+          "name": "keyword.color.ataribasic"
+        },
+        {
+          "match": "(?i:DR(AWT[O.]|(AW?)?\\.))",
+          "name": "keyword.drawto.ataribasic"
+        },
+        {
+          "match": "(?i:GR(APHIC[S.]|(A(P(HI?)?)?)?\\.))",
+          "name": "keyword.graphics.ataribasic"
+        },
+        {
+          "match": "(?i:LOC(AT[E.]|A?\\.))",
+          "name": "keyword.locate.ataribasic"
+        },
+        {
+          "match": "(?i:POS(ITIO[N.]|(I(TI?)?)?\\.))",
+          "name": "keyword.position.ataribasic"
+        },
+        {
+          "match": "(?i:PL(OT|O?\\.))",
+          "name": "keyword.plot.ataribasic"
+        },
+        {
+          "match": "(?i:SE(TCOLO[R.]|(T(C(OL?)?)?)?\\.))",
+          "name": "keyword.setcolor.ataribasic"
+        },
+        {
+          "match": "(?i:SO(UN[D.]|U?\\.))",
+          "name": "keyword.sound.ataribasic"
+        },
+        {
+          "match": "(?i:REA[D.])",
+          "name": "keyword.read.ataribasic"
+        },
+        {
+          "match": "(?i:L(IS[T.]|I?\\.))",
+          "name": "keyword.list.ataribasic"
+        },
+        {
+          "match": "(LO(AD|A?\\.))|(S(AV[E.]|A?\\.))|(E(NT?)?\\.|ENTE[R.])",
+          "captures": {
+            "1": {
+              "name": "keyword.load.ataribasic"
+            },
+            "3": {
+              "name": "keyword.save.ataribasic"
+            },
+            "6": {
+              "name": "keyword.enter.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:G(OT[O.]|O?\\.))",
+          "name": "keyword.goto.ataribasic"
+        },
+        {
+          "match": "(?i:GO TO)",
+          "name": "keyword.go_to.ataribasic"
+        },
+        {
+          "match": "(?i:GOS(UB|U?\\.))",
+          "name": "keyword.gosub.ataribasic"
+        },
+        {
+          "match": "(?i:ON)",
+          "name": "keyword.on.ataribasic"
+        },
+        {
+          "begin": "(?i:IF)",
+          "end": ".",
+          "name": "keyword.if.ataribasic",
+          "endCaptures": {
+            "0": {
+              "name": "support.test.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\\s*:|$"
+            },
+            {
+              "include": "#real_expr"
+            },
+            {
+              "match": "\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
+              "captures": {
+                "1": {
+                  "name": "constant.numeric.line-number.ataribasic"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "match": "(?i:(LE[T.])?\\s*([A-Z][A-Z0-9]*\\$))",
+          "captures": {
+            "1": {
+              "name": "keyword.let.ataribasic"
+            },
+            "2": {
+              "name": "variable.string.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:(LE[T.])?\\s*([A-Z][A-Z0-9]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.let.ataribasic"
+            },
+            "2": {
+              "name": "variable.float.ataribasic"
+            }
+          }
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_xio": {
+      "patterns": [
+        {
+          "match": "\\,",
+          "name": "support.token.delimiter.list.1.ataribasic"
+        },
+        {
+          "include": "#real_expr"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_xio_part2": {
+      "patterns": [
+        {
+          "match": "\\s*(\\#)",
+          "captures": {
+            "1": {
+              "name": "support.token.iocb.ataribasic"
+            }
+          }
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_on": {
+      "patterns": [
+        {
+          "match": "\\s*(:|$|(?i:GOTO|GOSUB)\\b)"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_on_expr": {
+      "patterns": [
+        {
+          "match": "(?i:GOTO)",
+          "name": "keyword.on-goto.ataribasic"
+        },
+        {
+          "match": "(?i:GOSUB)",
+          "name": "keyword.on-gosub.ataribasic"
+        },
+        {
+          "include": "#mixin_some_exprs"
+        }
+      ]
+    },
+    "on_line_list": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": "(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?|(?i:[A-Z][A-Z0-9]*)\\s*(\\,)?)",
+          "captures": {
+            "1": {
+              "name": "constant.numeric.line-number.ataribasic"
+            },
+            "2": {
+              "name": "support.token.delimiter.list.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "[^\\d]"
+        }
+      ]
+    },
+    "cmd_rem": {
+      "patterns": [
+        {
+          "match": "$"
+        }
+      ]
+    },
+    "comment": {
+      "patterns": [
+        {
+          "match": "$"
+        }
+      ]
+    },
+    "cmd_data": {
+      "patterns": [
+        {
+          "match": "$"
+        },
+        {
+          "match": "([^,]+?)(\\s*$)?",
+          "name": "entity.literal.string.data.ataribasic"
+        },
+        {
+          "match": "\\,",
+          "name": "support.token.delimiter.data.ataribasic"
+        }
+      ]
+    },
+    "cmd_done": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_let": {
+      "patterns": [
+        {
+          "match": "\\(",
+          "name": "support.paren.open.subscript.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_let_equals": {
+      "patterns": [
+        {
+          "match": "=",
+          "name": "keyword.operator.assignment.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_if": {
+      "patterns": [
+        {
+          "match": "\\s*:|$"
+        },
+        {
+          "include": "#real_expr"
+        },
+        {
+          "match": "\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
+          "captures": {
+            "1": {
+              "name": "constant.numeric.line-number.ataribasic"
+            }
+          }
+        },
+        {
+          "match": ".",
+          "name": "support.test.ataribasic"
+        }
+      ]
+    },
+    "cmd_for": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": "(?i:TO)",
+          "name": "keyword.to.ataribasic"
+        },
+        {
+          "match": "STEP",
+          "name": "keyword.step.ataribasic"
+        },
+        {
+          "include": "#expr_start"
+        }
+      ]
+    },
+    "cmd_next": {
+      "patterns": [
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*)",
+          "name": "variable.float.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "cmd_dim_list": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": "\\,",
+          "name": "punctuation.definition.delimiter.list.ataribasic"
+        },
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*\\$)",
+          "name": "variable.string.ataribasic"
+        },
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*)",
+          "name": "variable.float.ataribasic"
+        }
+      ]
+    },
+    "cmd_dim_subscript": {
+      "patterns": [
+        {
+          "match": "\\(",
+          "name": "support.paren.open.dim.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "mixin_variable_name": {
+      "patterns": [
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*\\$)",
+          "name": "variable.string.ataribasic"
+        },
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*)",
+          "name": "variable.float.ataribasic"
+        }
+      ]
+    },
+    "var_eat_subscript": {
+      "patterns": [
+        {
+          "match": "\\(",
+          "name": "support.paren.open.subscript.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "mixin_values": {
+      "patterns": [
+        {
+          "match": "(?i:CHR\\$)",
+          "name": "meta.function-call.chrS.ataribasic"
+        },
+        {
+          "match": "(?i:STR\\$)",
+          "name": "meta.function-call.str.ataribasic"
+        },
+        {
+          "match": "(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG))",
+          "captures": {
+            "1": {
+              "name": "meta.function-call.fre.ataribasic"
+            },
+            "2": {
+              "name": "meta.function-call.usr.ataribasic"
+            },
+            "3": {
+              "name": "meta.function-call.abs.ataribasic"
+            },
+            "4": {
+              "name": "meta.function-call.adr.ataribasic"
+            },
+            "5": {
+              "name": "meta.function-call.asc.ataribasic"
+            },
+            "6": {
+              "name": "meta.function-call.atn.ataribasic"
+            },
+            "7": {
+              "name": "meta.function-call.clog.ataribasic"
+            },
+            "8": {
+              "name": "meta.function-call.cos.ataribasic"
+            },
+            "9": {
+              "name": "meta.function-call.exp.ataribasic"
+            },
+            "10": {
+              "name": "meta.function-call.int.ataribasic"
+            },
+            "11": {
+              "name": "meta.function-call.len.ataribasic"
+            },
+            "12": {
+              "name": "meta.function-call.log.ataribasic"
+            },
+            "13": {
+              "name": "meta.function-call.peek.ataribasic"
+            },
+            "14": {
+              "name": "meta.function-call.rnd.ataribasic"
+            },
+            "15": {
+              "name": "meta.function-call.sgn.ataribasic"
+            },
+            "16": {
+              "name": "meta.function-call.sin.ataribasic"
+            },
+            "17": {
+              "name": "meta.function-call.sqr.ataribasic"
+            },
+            "18": {
+              "name": "meta.function-call.val.ataribasic"
+            },
+            "19": {
+              "name": "meta.function-call.paddle.ataribasic"
+            },
+            "20": {
+              "name": "meta.function-call.ptrig.ataribasic"
+            },
+            "21": {
+              "name": "meta.function-call.stick.ataribasic"
+            },
+            "22": {
+              "name": "meta.function-call.strig.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+          "name": "constant.numeric.float.ataribasic"
+        },
+        {
+          "include": "#mixin_variable_name"
+        }
+      ]
+    },
+    "required_args": {
+      "patterns": [
+        {
+          "match": "\\(",
+          "name": "support.paren.open.func.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "mixin_operators": {
+      "patterns": [
+        {
+          "match": "\\,",
+          "name": "support.token.delimiter.list.ataribasic"
+        },
+        {
+          "match": "([-+*/^])",
+          "name": "keyword.operator.math.ataribasic"
+        },
+        {
+          "match": "(<>|[<>]=?|=|AND|NOT|OR)",
+          "name": "keyword.operator.logic.ataribasic"
+        }
+      ]
+    },
+    "expr_device_plus_two": {
+      "patterns": [
+        {
+          "match": "\\#\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
+          "name": "constant.numeric.device-id.ataribasic"
+        }
+      ]
+    },
+    "expr_device": {
+      "patterns": [
+        {
+          "match": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))?",
+          "name": "constant.numeric.device-id.ataribasic"
+        }
+      ]
+    },
+    "mixin_top_expr": {
+      "patterns": [
+        {
+          "include": "#mixin_string"
+        },
+        {
+          "match": "\\(",
+          "name": "support.paren.open.expr.ataribasic"
+        },
+        {
+          "match": "\\)"
+        },
+        {
+          "include": "#mixin_operators"
+        },
+        {
+          "include": "#mixin_values"
+        }
+      ]
+    },
+    "expr_start": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "include": "#mixin_top_expr"
+        }
+      ]
+    },
+    "expr_start_last": {
+      "patterns": [
+        {
+          "include": "#mixin_top_expr"
+        },
+        {
+          "match": ":",
+          "name": "support.token.delimiter.statement.ataribasic"
+        }
+      ]
+    },
+    "expr_paren_open": {
+      "patterns": [
+        {
+          "include": "#mixin_containers"
+        },
+        {
+          "include": "#mixin_values"
+        },
+        {
+          "include": "#mixin_operators"
+        },
+        {
+          "match": "[^)]*(;:|$)"
+        }
+      ]
+    },
+    "cmd_print_dev": {
+      "patterns": [
+        {
+          "match": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))?",
+          "name": "constant.numeric.device-id.ataribasic"
+        }
+      ]
+    },
+    "mixin_string": {
+      "patterns": [
+        {
+          "begin": "\\\"",
+          "end": "\\\"",
+          "name": "punctuation.definition.string.open.ataribasic",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.close.ataribasic"
+            }
+          },
+          "contentName": "string.quoted.ataribasic",
+          "patterns": [
+            {
+              "match": "[^\"]*$"
+            }
+          ]
+        }
+      ]
+    },
+    "cmd_print_old": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": "\\(",
+          "name": "support.paren.open.dim.ataribasic"
+        },
+        {
+          "match": "\\)"
+        },
+        {
+          "include": "#mixin_string"
+        },
+        {
+          "match": ";",
+          "name": "support.token.delimiter.concat.ataribasic"
+        },
+        {
+          "include": "#mixin_operators"
+        },
+        {
+          "include": "#mixin_values"
+        }
+      ]
+    },
+    "cmd_print": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": ";",
+          "name": "support.token.delimiter.concat.ataribasic"
+        },
+        {
+          "match": "\\,",
+          "name": "support.token.delimiter.tab.ataribasic"
+        },
+        {
+          "include": "#real_expr"
+        }
+      ]
+    },
+    "quoted_string": {
+      "patterns": [
+        {
+          "match": "[^\"]*$"
+        },
+        {
+          "match": "\\\"",
+          "name": "punctuation.definition.string.close.ataribasic"
+        }
+      ]
+    },
+    "syntax_error": {
+      "patterns": [
+        {
+          "match": "$"
+        }
+      ]
+    },
+    "line_should_end": {
+      "patterns": [
+        {
+          "match": "$"
+        },
+        {
+          "match": "(?i:\\s*(:)\\s*(RE[M.]|\\.))",
+          "captures": {
+            "1": {
+              "name": "support.token.delimiter.statement.ataribasic"
+            },
+            "2": {
+              "name": "keyword.rem.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "\\S.*"
+        }
+      ]
+    },
+    "statement_should_end": {
+      "patterns": [
+        {
+          "match": ":"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "line_and_statement_should_end": {
+      "patterns": [
+        {
+          "match": ":",
+          "name": "support.token.delimiter.statement.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "dead_code": {
+      "patterns": [
+        {
+          "match": ":",
+          "name": "support.token.delimiter.statement.ataribasic"
+        },
+        {
+          "match": "(?i:RE[M.]|\\.)",
+          "name": "keyword.rem.ataribasic marked.dead"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "marked_dead": {
+      "patterns": [
+        {
+          "include": "#code_line"
+        }
+      ]
+    },
+    "real_expr": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_eat_modifier": {
+      "patterns": [
+        {
+          "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+          "name": "constant.numeric.float.ataribasic"
+        },
+        {
+          "match": "(?i:(NOT)|(-)|(\\+))",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.logic.ataribasic"
+            },
+            "2": {
+              "name": "keyword.operator.negative.ataribasic"
+            },
+            "3": {
+              "name": "keyword.operator.positive.ataribasic"
+            }
+          }
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_2nd_modifier": {
+      "patterns": [
+        {
+          "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+          "name": "constant.numeric.float.ataribasic"
+        },
+        {
+          "match": "(?i:NOT|[-+])"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_wants_value": {
+      "patterns": [
+        {
+          "match": "(?i:CHR\\$)",
+          "name": "meta.function-call.chrS.ataribasic"
+        },
+        {
+          "match": "(?i:STR\\$)",
+          "name": "meta.function-call.str.ataribasic"
+        },
+        {
+          "match": "(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG))",
+          "captures": {
+            "1": {
+              "name": "meta.function-call.fre.ataribasic"
+            },
+            "2": {
+              "name": "meta.function-call.usr.ataribasic"
+            },
+            "3": {
+              "name": "meta.function-call.abs.ataribasic"
+            },
+            "4": {
+              "name": "meta.function-call.adr.ataribasic"
+            },
+            "5": {
+              "name": "meta.function-call.asc.ataribasic"
+            },
+            "6": {
+              "name": "meta.function-call.atn.ataribasic"
+            },
+            "7": {
+              "name": "meta.function-call.clog.ataribasic"
+            },
+            "8": {
+              "name": "meta.function-call.cos.ataribasic"
+            },
+            "9": {
+              "name": "meta.function-call.exp.ataribasic"
+            },
+            "10": {
+              "name": "meta.function-call.int.ataribasic"
+            },
+            "11": {
+              "name": "meta.function-call.len.ataribasic"
+            },
+            "12": {
+              "name": "meta.function-call.log.ataribasic"
+            },
+            "13": {
+              "name": "meta.function-call.peek.ataribasic"
+            },
+            "14": {
+              "name": "meta.function-call.rnd.ataribasic"
+            },
+            "15": {
+              "name": "meta.function-call.sgn.ataribasic"
+            },
+            "16": {
+              "name": "meta.function-call.sin.ataribasic"
+            },
+            "17": {
+              "name": "meta.function-call.sqr.ataribasic"
+            },
+            "18": {
+              "name": "meta.function-call.val.ataribasic"
+            },
+            "19": {
+              "name": "meta.function-call.paddle.ataribasic"
+            },
+            "20": {
+              "name": "meta.function-call.ptrig.ataribasic"
+            },
+            "21": {
+              "name": "meta.function-call.stick.ataribasic"
+            },
+            "22": {
+              "name": "meta.function-call.strig.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "\\(",
+          "name": "support.paren.open.ataribasic"
+        },
+        {
+          "match": "\\\"",
+          "name": "punctuation.definition.string.open.ataribasic"
+        },
+        {
+          "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+          "name": "variable.float.ataribasic"
+        },
+        {
+          "match": "(?i:THEN|GOTO|GOSUB)",
+          "name": "invalid.error.reserved-word.ataribasic"
+        },
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*\\$)",
+          "name": "variable.string.ataribasic"
+        },
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*)",
+          "name": "variable.float.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_wants_operator": {
+      "patterns": [
+        {
+          "match": "(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))"
+        },
+        {
+          "match": "[-+*/^]",
+          "name": "keyword.operator.math.ataribasic"
+        },
+        {
+          "match": "(?i:<>|[<>]=?|=|AND|OR)",
+          "name": "keyword.operator.logic.ataribasic"
+        },
+        {
+          "match": "(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))",
+          "captures": {
+            "1": {
+              "name": "keyword.then.ataribasic"
+            },
+            "2": {
+              "name": "constant.numeric.line-number.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:THEN)",
+          "name": "keyword.then.ataribasic"
+        },
+        {
+          "match": "(?i:(GOTO)|(GOSUB))",
+          "captures": {
+            "1": {
+              "name": "keyword.goto.ataribasic"
+            },
+            "2": {
+              "name": "keyword.gosub.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_wants_comparison": {
+      "patterns": [
+        {
+          "match": "(<>|[<>]=?|=)\\s*(:|$)"
+        },
+        {
+          "match": "<>|[<>]=?|=",
+          "name": "keyword.operator.logic.ataribasic"
+        },
+        {
+          "match": "(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))",
+          "captures": {
+            "1": {
+              "name": "keyword.then.ataribasic"
+            },
+            "2": {
+              "name": "constant.numeric.line-number.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "(?i:THEN)",
+          "name": "keyword.then.ataribasic"
+        },
+        {
+          "match": "(?i:(GOTO)|(GOSUB))",
+          "captures": {
+            "1": {
+              "name": "keyword.goto.ataribasic"
+            },
+            "2": {
+              "name": "keyword.gosub.ataribasic"
+            }
+          }
+        },
+        {
+          "match": "((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_eat_subscript": {
+      "patterns": [
+        {
+          "match": "\\s*(\\()",
+          "captures": {
+            "1": {
+              "name": "support.paren.open.subscript.ataribasic"
+            }
+          }
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_eat_string": {
+      "patterns": [
+        {
+          "match": "$"
+        },
+        {
+          "match": "[^\"]*(\")",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.string.close.ataribasic"
+            }
+          }
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_till_close": {
+      "patterns": [
+        {
+          "match": "[^)]*(;:|$)"
+        },
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": "\\)",
+          "name": "support.paren.close.subscript.ataribasic"
+        },
+        {
+          "match": "\\,",
+          "name": "support.token.delimiter.subscripts.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_wants_float": {
+      "patterns": [
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*\\$)"
+        },
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*)",
+          "name": "variable.float.ataribasic"
+        },
+        {
+          "match": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
+          "name": "constant.numeric.float.ataribasic"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "expr_wants_string": {
+      "patterns": [
+        {
+          "match": "(?i:[A-Z][A-Z0-9]*\\$)",
+          "name": "variable.string.ataribasic"
+        },
+        {
+          "include": "#mixin_string"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "mixin_containers": {
+      "patterns": [
+        {
+          "include": "#mixin_string"
+        },
+        {
+          "match": "\\(",
+          "name": "support.paren.open.expr.ataribasic"
+        },
+        {
+          "match": "\\)",
+          "name": "support.paren.close.ataribasic"
+        }
+      ]
+    },
+    "mixin_some_exprs": {
+      "patterns": [
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "include": "#mixin_string"
+        },
+        {
+          "match": "(?i:(<>|[<>]=?|=|AND|NOT|OR))",
+          "name": "keyword.operator.logic.ataribasic"
+        },
+        {
+          "include": "#mixin_values"
+        },
+        {
+          "match": "\\(",
+          "name": "support.paren.open.expr.ataribasic"
+        },
+        {
+          "match": "\\)"
+        },
+        {
+          "match": "[:$]"
+        },
+        {
+          "match": "([-+*/^])",
+          "name": "keyword.operator.math.ataribasic"
+        }
+      ]
+    },
+    "one_expr": {
+      "patterns": [
+        {
+          "match": "\\s*([,;:]|$)"
+        },
+        {
+          "match": ""
+        }
+      ]
+    },
+    "two_exprs": {
+      "patterns": [
+        {
+          "match": "\\s*:|$"
+        },
+        {
+          "match": "\\s*(,)",
+          "captures": {
+            "1": {
+              "name": "support.token.delimiter.list.1.ataribasic"
+            }
+          }
+        },
+        {
+          "include": "#real_expr"
+        }
+      ]
+    },
+    "three_exprs": {
+      "patterns": [
+        {
+          "match": "\\s*:|$"
+        },
+        {
+          "match": "\\s*(,)",
+          "captures": {
+            "1": {
+              "name": "support.token.delimiter.list.2.ataribasic"
+            }
+          }
+        },
+        {
+          "include": "#real_expr"
+        }
+      ]
+    },
+    "four_exprs": {
+      "patterns": [
+        {
+          "match": "\\s*:|$"
+        },
+        {
+          "match": "\\s*(,)",
+          "captures": {
+            "1": {
+              "name": "support.token.delimiter.list.3.ataribasic"
+            }
+          }
+        },
+        {
+          "include": "#real_expr"
+        }
+      ]
+    },
+    "mixin_statement_end": {
+      "patterns": [
+        {
+          "match": ":\\s*$"
+        },
+        {
+          "match": ":|$",
+          "name": "support.token.delimiter.statement.ataribasic"
+        }
+      ]
+    }
+  },
+  "fileTypes": [
+    [
+      "lst",
+      "ulst",
+      "ataribas",
+      "ataribasic"
+    ]
+  ]
+}

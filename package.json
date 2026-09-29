@@ -1,0 +1,364 @@
+{
+  "name": "ataritools",
+  "displayName": "AtariCode800",
+  "description": "Atari 8-bit development suite: BASIC tokenizer, LIST/hex/VNT-VVT inspector, 6502 assembly, and graphics tooling.",
+  "version": "0.1.0",
+  "publisher": "thinkyhead",
+  "license": "MIT",
+  "keywords": [
+    "Atari",
+    "BASIC",
+    "6502",
+    "retro",
+    "8-bit"
+  ],
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinkyhead/AtariCode800.git"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./src/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "AtariTools",
+      "properties": {
+        "ataritools.pythonPath": {
+          "type": "string",
+          "default": "python3",
+          "description": "Python 3 interpreter used to run the Atari BASIC tokenizer."
+        },
+        "ataritools.basicToolPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to basic.py. Leave empty to use the copy bundled with the extension."
+        },
+        "ataritools.emulatorPath": {
+          "type": "string",
+          "default": "atari800",
+          "description": "Path to the atari800 executable."
+        },
+        "ataritools.emulatorModel": {
+          "type": "string",
+          "default": "-atari",
+          "enum": [
+            "-atari",
+            "-xl",
+            "-xe",
+            "-320xe",
+            "-rambo",
+            "-5200"
+          ],
+          "description": "Machine to emulate. -atari is the 400/800; -xl is the 800XL."
+        },
+        "ataritools.emulatorOptions": {
+          "type": "string",
+          "default": "-win-width 1200 -win-height 900 -colors-preset deep-black",
+          "description": "Extra atari800 options (display, colors, sound)."
+        },
+        "ataritools.hardDrivePath": {
+          "type": "string",
+          "default": "",
+          "description": "H: device directory the emulator reads. Built .BAS files are staged here."
+        },
+        "ataritools.turbo": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run the emulator with -turbo."
+        },
+        "ataritools.ca65Path": {
+          "type": "string",
+          "default": "ca65",
+          "description": "Path to the ca65 assembler (cc65 toolchain)."
+        },
+        "ataritools.ld65Path": {
+          "type": "string",
+          "default": "ld65",
+          "description": "Path to the ld65 linker (cc65 toolchain)."
+        },
+        "ataritools.cl65Path": {
+          "type": "string",
+          "default": "cl65",
+          "description": "Path to cl65, the cc65 compile-and-link driver (used for C)."
+        },
+        "ataritools.targetLib": {
+          "type": "string",
+          "default": "atari.lib",
+          "description": "cc65 target library linked with ld65. Resolves __EXEHDR__/__AUTOSTART__; clear it for a freestanding link."
+        },
+        "ataritools.cc65CfgDir": {
+          "type": "string",
+          "default": "",
+          "description": "Directory holding cc65's stock .cfg templates. Empty auto-detects MacPorts/Homebrew."
+        },
+        "ataritools.compactListing": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the abbreviated (compact) listing in the Inspector by default."
+        },
+        "ataritools.atasciiFont": {
+          "type": "string",
+          "default": "AtariClassic-Regular, 'Atari Classic', 'EightBit Atari', monospace",
+          "description": "Font stack for the ATASCII character palettes."
+        }
+      }
+    },
+    "commands": [
+      {
+        "category": "AtariTools",
+        "command": "ataritools.build",
+        "title": "Build .BAS from .LST",
+        "icon": "$(package)"
+      },
+      {
+        "category": "AtariTools",
+        "command": "ataritools.run",
+        "title": "Build and Run in atari800",
+        "icon": "$(play)"
+      },
+      {
+        "category": "AtariTools",
+        "command": "ataritools.inspect",
+        "title": "Open BASIC Inspector",
+        "icon": "$(search)"
+      },
+      {
+        "category": "ATASCII",
+        "command": "ataritools.atascii.insertInverted",
+        "title": "Insert Inverted Character\u2026"
+      },
+      {
+        "category": "ATASCII",
+        "command": "ataritools.atascii.insertSpecial",
+        "title": "Insert Special Character\u2026"
+      },
+      {
+        "category": "ATASCII",
+        "command": "ataritools.atascii.insertDrawing",
+        "title": "Insert Drawing Character\u2026"
+      },
+      {
+        "category": "ATASCII",
+        "command": "ataritools.atascii.invertSelection",
+        "title": "Invert Selected Text"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "ataritools.inspect",
+          "when": "resourceLangId == ataribasic",
+          "group": "navigation@1"
+        },
+        {
+          "command": "ataritools.run",
+          "when": "resourceLangId == ataribasic",
+          "group": "navigation@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "ataritools.build",
+          "when": "resourceLangId == ataribasic"
+        },
+        {
+          "command": "ataritools.run",
+          "when": "resourceLangId == ataribasic"
+        },
+        {
+          "command": "ataritools.inspect",
+          "when": "resourceLangId == ataribasic"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "ataritools.atascii.insertInverted",
+          "when": "resourceLangId == ataribasic",
+          "group": "ataritools@1"
+        },
+        {
+          "command": "ataritools.atascii.insertSpecial",
+          "when": "resourceLangId == ataribasic",
+          "group": "ataritools@1"
+        },
+        {
+          "command": "ataritools.atascii.insertDrawing",
+          "when": "resourceLangId == ataribasic",
+          "group": "ataritools@1"
+        },
+        {
+          "command": "ataritools.atascii.invertSelection",
+          "when": "resourceLangId == ataribasic",
+          "group": "ataritools@1"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "ataritools.run",
+        "key": "ctrl+shift+b",
+        "mac": "cmd+shift+b",
+        "when": "resourceLangId == ataribasic"
+      },
+      {
+        "command": "ataritools.inspect",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i",
+        "when": "resourceLangId == ataribasic"
+      },
+      {
+        "command": "ataritools.atascii.insertInverted",
+        "key": "ctrl+shift+a ctrl+shift+a",
+        "when": "editorTextFocus && resourceLangId == ataribasic"
+      },
+      {
+        "command": "ataritools.atascii.insertSpecial",
+        "key": "ctrl+shift+a ctrl+shift+s",
+        "when": "editorTextFocus && resourceLangId == ataribasic"
+      },
+      {
+        "command": "ataritools.atascii.insertDrawing",
+        "key": "ctrl+shift+a ctrl+shift+d",
+        "when": "editorTextFocus && resourceLangId == ataribasic"
+      },
+      {
+        "command": "ataritools.atascii.invertSelection",
+        "key": "ctrl+shift+a ctrl+shift+i",
+        "when": "editorTextFocus && resourceLangId == ataribasic"
+      }
+    ],
+    "configurationDefaults": {
+      "[ataribasic]": {
+        "editor.fontFamily": "AtariClassic-Regular, 'Atari Classic', 'EightBit Atari', monospace",
+        "editor.fontSize": 16,
+        "editor.fontLigatures": false,
+        "editor.wordWrap": "off",
+        "editor.rulers": [
+          38,
+          40,
+          76,
+          80,
+          114,
+          120,
+          254
+        ],
+        "editor.tabSize": 1,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.autoIndent": "none",
+        "editor.minimap.enabled": false,
+        "editor.renderWhitespace": "none",
+        "editor.guides.indentation": false,
+        "editor.occurrencesHighlight": "off",
+        "editor.suggest.showWords": false
+      },
+      "[asm6502]": {
+        "editor.tabSize": 8,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false
+      }
+    },
+    "languages": [
+      {
+        "id": "ataribasic",
+        "aliases": [
+          "Atari BASIC",
+          "AtariBASIC"
+        ],
+        "extensions": [
+          ".lst",
+          ".LST",
+          ".ulst",
+          ".ULST"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "asm6502",
+        "aliases": [
+          "Atari 6502 Assembly",
+          "6502"
+        ],
+        "extensions": [
+          ".asm",
+          ".s",
+          ".inc",
+          ".mac",
+          ".a65"
+        ],
+        "configuration": "./asm-language-configuration.json"
+      },
+      {
+        "id": "ld65cfg",
+        "aliases": [
+          "LD65 Config",
+          "ld65"
+        ],
+        "extensions": [
+          ".lnk",
+          ".cfg"
+        ],
+        "configuration": "./asm-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ataribasic",
+        "scopeName": "source.ataribasic",
+        "path": "./syntax/ataribasic.tmLanguage.json"
+      },
+      {
+        "language": "asm6502",
+        "scopeName": "source.asm",
+        "path": "./syntax/asm6502.tmLanguage.json"
+      },
+      {
+        "language": "ld65cfg",
+        "scopeName": "source.ld65cfg",
+        "path": "./syntax/ld65config.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.ataribasic.ci",
+        "path": "./syntax/ataribasic-ci.tmLanguage.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "Atari800",
+        "uiTheme": "vs-dark",
+        "path": "./themes/atari800-light-color-theme.json"
+      },
+      {
+        "label": "Atari800 Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/atari800-dark-color-theme.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "vscode-oniguruma": "^1.7.0",
+    "vscode-textmate": "^9.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/thinkyhead/AtariCode800/issues"
+  },
+  "homepage": "https://github.com/thinkyhead/AtariCode800#readme",
+  "scripts": {
+    "test": "node test/smoke.js && node test/tokenize.js",
+    "smoke": "node test/smoke.js",
+    "tokenize": "node test/tokenize.js",
+    "sync": "tools/sync_tokenizer.sh",
+    "sync:check": "tools/sync_tokenizer.sh --check",
+    "package": "vsce package"
+  }
+}

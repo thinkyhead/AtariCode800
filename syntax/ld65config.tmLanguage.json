@@ -1,0 +1,503 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "LD65 Config",
+  "scopeName": "source.ld65cfg",
+  "patterns": [
+    {
+      "include": "#mixin_comment"
+    },
+    {
+      "begin": "(MEMORY)\\s*({)",
+      "end": "(?:(?:\\})|(?=$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.section.memory.lnk"
+        },
+        "2": {
+          "name": "punctuation.section.open.lnk"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.close.lnk"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#lnk_section_memory"
+        }
+      ],
+      "contentName": "ctx.section.memory.lnk"
+    },
+    {
+      "begin": "(SEGMENTS)\\s*({)",
+      "end": "(?:(?:\\})|(?=$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.section.segments.lnk"
+        },
+        "2": {
+          "name": "punctuation.section.open.lnk"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.close.lnk"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#lnk_section_segments"
+        }
+      ],
+      "contentName": "ctx.section.segments.lnk"
+    },
+    {
+      "begin": "(FILES)\\s*({)",
+      "end": "(?:(?:\\})|(?=$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.section.files.lnk"
+        },
+        "2": {
+          "name": "punctuation.section.open.lnk"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.close.lnk"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#lnk_section_files"
+        }
+      ],
+      "contentName": "ctx.section.files.lnk"
+    },
+    {
+      "begin": "(FORMATS)\\s*({)",
+      "end": "(?:(?:\\})|(?=$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.section.formats.lnk"
+        },
+        "2": {
+          "name": "punctuation.section.open.lnk"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.close.lnk"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#lnk_section_formats"
+        }
+      ],
+      "contentName": "ctx.section.formats.lnk"
+    },
+    {
+      "begin": "(FEATURES)\\s*({)",
+      "end": "(?:(?:\\})|(?=$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.section.features.lnk"
+        },
+        "2": {
+          "name": "punctuation.section.open.lnk"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.close.lnk"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#lnk_section_features"
+        }
+      ],
+      "contentName": "ctx.section.features.lnk"
+    },
+    {
+      "begin": "([a-zA-Z0-9_]+)\\s*({)",
+      "end": "(?:(?:\\})|(?=$))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.section.other.lnk"
+        },
+        "2": {
+          "name": "punctuation.section.open.lnk"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.close.lnk"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#lnk_section_other"
+        }
+      ],
+      "contentName": "ctx.section.other.lnk"
+    },
+    {
+      "begin": ".+",
+      "end": "(?:(?:\\s*$)|(?=$))",
+      "patterns": [
+        {
+          "include": "#lnk_error"
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "main": {
+      "name": "ctx.main",
+      "patterns": [
+        {
+          "include": "#mixin_comment"
+        },
+        {
+          "begin": "(MEMORY)\\s*({)",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.section.memory.lnk"
+            },
+            "2": {
+              "name": "punctuation.section.open.lnk"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.close.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_section_memory"
+            }
+          ],
+          "contentName": "ctx.section.memory.lnk"
+        },
+        {
+          "begin": "(SEGMENTS)\\s*({)",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.section.segments.lnk"
+            },
+            "2": {
+              "name": "punctuation.section.open.lnk"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.close.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_section_segments"
+            }
+          ],
+          "contentName": "ctx.section.segments.lnk"
+        },
+        {
+          "begin": "(FILES)\\s*({)",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.section.files.lnk"
+            },
+            "2": {
+              "name": "punctuation.section.open.lnk"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.close.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_section_files"
+            }
+          ],
+          "contentName": "ctx.section.files.lnk"
+        },
+        {
+          "begin": "(FORMATS)\\s*({)",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.section.formats.lnk"
+            },
+            "2": {
+              "name": "punctuation.section.open.lnk"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.close.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_section_formats"
+            }
+          ],
+          "contentName": "ctx.section.formats.lnk"
+        },
+        {
+          "begin": "(FEATURES)\\s*({)",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.section.features.lnk"
+            },
+            "2": {
+              "name": "punctuation.section.open.lnk"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.close.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_section_features"
+            }
+          ],
+          "contentName": "ctx.section.features.lnk"
+        },
+        {
+          "begin": "([a-zA-Z0-9_]+)\\s*({)",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.section.other.lnk"
+            },
+            "2": {
+              "name": "punctuation.section.open.lnk"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.close.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_section_other"
+            }
+          ],
+          "contentName": "ctx.section.other.lnk"
+        },
+        {
+          "begin": ".+",
+          "end": "(?:(?:\\s*$)|(?=$))",
+          "patterns": [
+            {
+              "include": "#lnk_error"
+            }
+          ]
+        }
+      ]
+    },
+    "lnk_section_memory": {
+      "contentName": "ctx.section.memory.lnk",
+      "patterns": [
+        {
+          "include": "#lnk_section"
+        }
+      ]
+    },
+    "lnk_section_segments": {
+      "contentName": "ctx.section.segments.lnk",
+      "patterns": [
+        {
+          "include": "#lnk_section"
+        }
+      ]
+    },
+    "lnk_section_files": {
+      "contentName": "ctx.section.files.lnk",
+      "patterns": [
+        {
+          "include": "#lnk_section"
+        }
+      ]
+    },
+    "lnk_section_formats": {
+      "contentName": "ctx.section.formats.lnk",
+      "patterns": [
+        {
+          "include": "#lnk_section"
+        }
+      ]
+    },
+    "lnk_section_features": {
+      "contentName": "ctx.section.features.lnk",
+      "patterns": [
+        {
+          "include": "#lnk_section"
+        }
+      ]
+    },
+    "lnk_section_other": {
+      "contentName": "ctx.section.other.lnk",
+      "patterns": [
+        {
+          "include": "#lnk_section"
+        }
+      ]
+    },
+    "lnk_section": {
+      "patterns": [
+        {
+          "match": ""
+        },
+        {
+          "begin": "(BSS|CODE|DATA|RODATA|VECTORS)(:)\\s*",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.option.segment.lnk"
+            },
+            "2": {
+              "name": "punctuation.colon.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_parameters"
+            }
+          ]
+        },
+        {
+          "begin": "(R[AO]M\\d|STACK)(:)\\s*",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.option.memory.lnk"
+            },
+            "2": {
+              "name": "punctuation.colon.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_parameters"
+            }
+          ]
+        },
+        {
+          "include": "#mixin_comment"
+        }
+      ]
+    },
+    "lnk_parameters": {
+      "name": "ctx.parameters.lnk",
+      "patterns": [
+        {
+          "match": "[ \\t]+"
+        },
+        {
+          "match": "\\n",
+          "name": "punctuation.separator.parameter.lnk"
+        },
+        {
+          "match": "([a-z]+)\\s*(=)\\s*([\\$a-z0-9A-Z_]+)",
+          "captures": {
+            "1": {
+              "name": "keyword.parameter.name.lnk"
+            },
+            "2": {
+              "name": "keyword.operator.equals.parameter.lnk"
+            },
+            "3": {
+              "name": "support.constant.parameter.lnk"
+            }
+          }
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.parameter.lnk"
+        },
+        {
+          "begin": ";",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.eol.parameter.lnk"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_line_done"
+            }
+          ]
+        }
+      ]
+    },
+    "lnk_comment": {
+      "name": "ctx.comment.lnk",
+      "patterns": []
+    },
+    "mixin_comment": {
+      "patterns": [
+        {
+          "match": ""
+        },
+        {
+          "begin": "#",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.comment.start"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#lnk_comment"
+            }
+          ]
+        }
+      ]
+    },
+    "lnk_line_done": {
+      "patterns": [
+        {
+          "match": ""
+        },
+        {
+          "include": "#mixin_comment"
+        },
+        {
+          "begin": "()",
+          "end": "(?:(?:\\s*$)|(?=$))",
+          "patterns": [
+            {
+              "include": "#lnk_error"
+            }
+          ]
+        }
+      ]
+    },
+    "lnk_error": {
+      "name": "invalid.error.syntax.lnk",
+      "patterns": []
+    }
+  },
+  "fileTypes": [
+    [
+      "lnk"
+    ]
+  ]
+}

@@ -1,0 +1,1451 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "6502 Assembly",
+  "scopeName": "source.asm6502",
+  "patterns": [
+    {
+      "begin": "(\\$[0-9a-fA-F]+)",
+      "end": "(?=:|$)",
+      "beginCaptures": {
+        "0": {
+          "name": "constant.disassembly.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#appleii"
+        }
+      ]
+    },
+    {
+      "begin": "^\\s*((A(?:DRESS|FP|LLPOT|TACHR|TRACT|PPMHI|UD(?:[CF][1-4]|CTL))|B(?:ASICF|FENHI|FENLO|FF[0ACE]|ININT|ITMSK|LIM|OOT(?:AD|Q)|OTSCR|PTR|RKBYT|RKKEY|UF(?:ADR|CNT|RFL|RHI|RLO|STR))|C(?:A(?:RTCK|SBUF|SFLG|SINI|SSBT|UX[12])|BAUD[HL]|COMND|DEVIC|DTM(?:5|A[12]|F[34]|V[1-5])|H(?:|1|ACTL?|AR|BASE?|KSNT|KSUM|LINK|SALT)|IOV|IX|KEY|MCMD|OL(?:AC|CRS|DST|INC|OR[0-4]|PF1|RSH)|ONSOL|OUNTR|RETRY|RITIC|RSINH|V[AI]FP|VFASC)|D(?:ATAD|ATALN|AUX[12]|BSECT|BUF(?:HI|LO)|BYT(?:HI|LO)|COMND|DEVIC|EGFLG|ELTA[CR]|ERRF|FLAGS|IGRT|INDEX|LIST[HL]|MACTL|MAS(?:AV|K)|OS(?:INI|VEC)|RETRY|RKMSK|S(?:CTLN|KTIM|PFLG|TATS?)|TIMLO|UNIT|UNUSE|VSTAT)|E(?:EXP|NDPT|RRFLG|SCFLG|SIGN|XP(?:|10))|F(?:ADD|ASC|CHRFLG|DIV|EOF|IL(?:DAT|FLG)|INE|KDEF|LD[01][PR]|MOVE|MUL|PI|R[2E]|R[01]M?|REQ|RX|ST0[PR]|STOR|SUB|TYPE)|G(?:BYTEA|INTLK|LBABS|PRIOR)|H(?:ATABS|ELPFL?G|IBYTE|IMEM|NDLOD|OLD(?:[1-4]|CH)|SCROL)|I(?:CAU?X[1-6]Z?|CB(?:[AL][HL]Z?)|CCOM[TZ]?|C(?:DNO|HID|PTH|PTL|PUT|STA)Z?|FP|N(?:BUFF|ITAD|SDAT|TEMP|VFLG)|OCB|RQEN|RQST)|JVECK|KBCODE|KEY(?:DEF|DEL|DIS|REP)|KRPDEL|L(?:BUFF|COUNT|MARGN|NFLG|OMEM|OADAD|OG(?:|10|COL|MAP)|PEN[HV]|TEMP)|M(?:EMLO|EMTOP|LTTMP|V0TO1)|N(?:EWADR|EW(?:COL|ROW)|GFLAG|MI(?:EN|RES|ST)|OCKSM|OCLIK|SIGN)|OLD(?:ADR|CHR|COL|ROW)|OUTBUFF|P(?:[AB]CTL|ADDL[0-7]|AL|ALNTS|BPNT|BUFSZ|COLR[0-3]|DMSK|DVMSK|DVS|EN[HV]|LYEVL|MBASE|OKADR|OKMSK|ORT[AB]|OT(?:[0-7]|GO)|PTMP[AX]|RIOR|RNBUF|TABW|TIMOT|TRIG[0-7]|UPBT[123])|R(?:ADFLG|AM(?:LO|SIZ|TOP)|ANDOM|EC(?:LEN|VDN)|ELADR|MARGN|NDLOC|OW(?:AC|CRS|INC)|TCLOK|UNADR?|UNSTK)|S(?:AV(?:ADR|IO|MSC)|CRFLG|DLST[HL]|DMCTL|ELFSV|ERIN|EROUT|GNFLG|HF(?:AMT|LOK)|HPDVS|K(?:BLANKS?|PBLANK|CTL|IP_SPACES|RES|STAT)|OUNDR|RTIMR|SFLAG|SKCTL|T(?:ACKP|ARP|ATUS|ICK[0-3]|IMER|MTAB|MCUR|OPLN|RIG[0-3])|UBTMP|UPERF|WPFLG)|TABMAP|TEMP[123]?|TEMPOR|TIM(?:ER[12]|FLG)|TINDEX|TMP(?:COL|LBT|ROW)|TRAMSZ|TRIG[0-3]|TSTAT|TXT(?:COL|MSC|OLD|ROW)|V(?:BR(?:EAK|KKY)|COUNT|DSLST|IMIRQ|INTER|KEYBD|NT[DP]|PIRQ|PRCED|SCROL|SER(?:IN|OC|OR)|SFLAG|TIMR[124]|VBLK[DI]|VTP)|W(?:ARMST|MODE|SYNC)|XFMFLG|XMTDON|Z(?:CHAIN|F1|FR0|IO?CB|LOADA))|([a-zA-Z_][a-zA-Z0-9_]*))\\s*(i:=|EQU)\\s*",
+      "end": "(?=:|$)",
+      "beginCaptures": {
+        "2": {
+          "name": "entity.name.constant.atari.asm"
+        },
+        "3": {
+          "name": "entity.name.constant.asm"
+        },
+        "4": {
+          "name": "keyword.operator.assignment.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#operand"
+        }
+      ]
+    },
+    {
+      "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(i:(:?\\.?SET)\\b)",
+      "end": "(?=:|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.variable.asm"
+        },
+        "2": {
+          "name": "keyword.operator.assignment.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#operand"
+        }
+      ]
+    },
+    {
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*:",
+      "name": "entity.name.label.asm"
+    },
+    {
+      "match": "@[a-zA-Z_][a-zA-Z0-9_]*:",
+      "name": "entity.name.label.local.asm"
+    },
+    {
+      "match": ":",
+      "name": "entity.name.label.anonymous.asm"
+    },
+    {
+      "begin": ";;",
+      "end": "(?:(?:\\n)|(?=$))",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#annotation"
+        }
+      ]
+    },
+    {
+      "begin": ";",
+      "end": "(?:(?:\\n)|(?=$))",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#anon_0"
+        }
+      ]
+    },
+    {
+      "match": "(\\.(?i:proc))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.asm"
+        },
+        "2": {
+          "name": "entity.name.function.asm"
+        }
+      }
+    },
+    {
+      "match": "(\\.(?i:scope))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.asm"
+        },
+        "2": {
+          "name": "entity.name.scope.asm"
+        }
+      }
+    },
+    {
+      "begin": "(\\.(?i:mac|macro))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "end": "(?=:|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.asm"
+        },
+        "2": {
+          "name": "entity.name.macro.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#macro-parms"
+        }
+      ]
+    },
+    {
+      "match": "(?i:(ECHO)\\b\\s*({{[\\s\\S]+}}))",
+      "captures": {
+        "1": {
+          "name": "keyword.asm"
+        },
+        "2": {
+          "name": "string.unquoted.asm"
+        }
+      }
+    },
+    {
+      "begin": "(?i:(MAC|MACRO)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b)",
+      "end": "(?=:|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.asm"
+        },
+        "2": {
+          "name": "entity.name.macro.asm"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#macro-parms"
+        }
+      ]
+    },
+    {
+      "match": "(?i:(ENDM|MEXIT)\\b)",
+      "name": "keyword.asm"
+    },
+    {
+      "match": "(?i:(PROCESSOR)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b)",
+      "captures": {
+        "1": {
+          "name": "keyword.asm"
+        },
+        "2": {
+          "name": "entity.name.processor.asm"
+        }
+      }
+    },
+    {
+      "include": "#unknown-fallback"
+    }
+  ],
+  "repository": {
+    "skip-whitespace": {
+      "patterns": [
+        {
+          "match": ""
+        }
+      ]
+    },
+    "main": {
+      "patterns": [
+        {
+          "begin": "(\\$[0-9a-fA-F]+)",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "constant.disassembly.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#appleii"
+            }
+          ]
+        },
+        {
+          "begin": "^\\s*((A(?:DRESS|FP|LLPOT|TACHR|TRACT|PPMHI|UD(?:[CF][1-4]|CTL))|B(?:ASICF|FENHI|FENLO|FF[0ACE]|ININT|ITMSK|LIM|OOT(?:AD|Q)|OTSCR|PTR|RKBYT|RKKEY|UF(?:ADR|CNT|RFL|RHI|RLO|STR))|C(?:A(?:RTCK|SBUF|SFLG|SINI|SSBT|UX[12])|BAUD[HL]|COMND|DEVIC|DTM(?:5|A[12]|F[34]|V[1-5])|H(?:|1|ACTL?|AR|BASE?|KSNT|KSUM|LINK|SALT)|IOV|IX|KEY|MCMD|OL(?:AC|CRS|DST|INC|OR[0-4]|PF1|RSH)|ONSOL|OUNTR|RETRY|RITIC|RSINH|V[AI]FP|VFASC)|D(?:ATAD|ATALN|AUX[12]|BSECT|BUF(?:HI|LO)|BYT(?:HI|LO)|COMND|DEVIC|EGFLG|ELTA[CR]|ERRF|FLAGS|IGRT|INDEX|LIST[HL]|MACTL|MAS(?:AV|K)|OS(?:INI|VEC)|RETRY|RKMSK|S(?:CTLN|KTIM|PFLG|TATS?)|TIMLO|UNIT|UNUSE|VSTAT)|E(?:EXP|NDPT|RRFLG|SCFLG|SIGN|XP(?:|10))|F(?:ADD|ASC|CHRFLG|DIV|EOF|IL(?:DAT|FLG)|INE|KDEF|LD[01][PR]|MOVE|MUL|PI|R[2E]|R[01]M?|REQ|RX|ST0[PR]|STOR|SUB|TYPE)|G(?:BYTEA|INTLK|LBABS|PRIOR)|H(?:ATABS|ELPFL?G|IBYTE|IMEM|NDLOD|OLD(?:[1-4]|CH)|SCROL)|I(?:CAU?X[1-6]Z?|CB(?:[AL][HL]Z?)|CCOM[TZ]?|C(?:DNO|HID|PTH|PTL|PUT|STA)Z?|FP|N(?:BUFF|ITAD|SDAT|TEMP|VFLG)|OCB|RQEN|RQST)|JVECK|KBCODE|KEY(?:DEF|DEL|DIS|REP)|KRPDEL|L(?:BUFF|COUNT|MARGN|NFLG|OMEM|OADAD|OG(?:|10|COL|MAP)|PEN[HV]|TEMP)|M(?:EMLO|EMTOP|LTTMP|V0TO1)|N(?:EWADR|EW(?:COL|ROW)|GFLAG|MI(?:EN|RES|ST)|OCKSM|OCLIK|SIGN)|OLD(?:ADR|CHR|COL|ROW)|OUTBUFF|P(?:[AB]CTL|ADDL[0-7]|AL|ALNTS|BPNT|BUFSZ|COLR[0-3]|DMSK|DVMSK|DVS|EN[HV]|LYEVL|MBASE|OKADR|OKMSK|ORT[AB]|OT(?:[0-7]|GO)|PTMP[AX]|RIOR|RNBUF|TABW|TIMOT|TRIG[0-7]|UPBT[123])|R(?:ADFLG|AM(?:LO|SIZ|TOP)|ANDOM|EC(?:LEN|VDN)|ELADR|MARGN|NDLOC|OW(?:AC|CRS|INC)|TCLOK|UNADR?|UNSTK)|S(?:AV(?:ADR|IO|MSC)|CRFLG|DLST[HL]|DMCTL|ELFSV|ERIN|EROUT|GNFLG|HF(?:AMT|LOK)|HPDVS|K(?:BLANKS?|PBLANK|CTL|IP_SPACES|RES|STAT)|OUNDR|RTIMR|SFLAG|SKCTL|T(?:ACKP|ARP|ATUS|ICK[0-3]|IMER|MTAB|MCUR|OPLN|RIG[0-3])|UBTMP|UPERF|WPFLG)|TABMAP|TEMP[123]?|TEMPOR|TIM(?:ER[12]|FLG)|TINDEX|TMP(?:COL|LBT|ROW)|TRAMSZ|TRIG[0-3]|TSTAT|TXT(?:COL|MSC|OLD|ROW)|V(?:BR(?:EAK|KKY)|COUNT|DSLST|IMIRQ|INTER|KEYBD|NT[DP]|PIRQ|PRCED|SCROL|SER(?:IN|OC|OR)|SFLAG|TIMR[124]|VBLK[DI]|VTP)|W(?:ARMST|MODE|SYNC)|XFMFLG|XMTDON|Z(?:CHAIN|F1|FR0|IO?CB|LOADA))|([a-zA-Z_][a-zA-Z0-9_]*))\\s*(i:=|EQU)\\s*",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.constant.atari.asm"
+            },
+            "3": {
+              "name": "entity.name.constant.asm"
+            },
+            "4": {
+              "name": "keyword.operator.assignment.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(i:(:?\\.?SET)\\b)",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.variable.asm"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*:",
+          "name": "entity.name.label.asm"
+        },
+        {
+          "match": "@[a-zA-Z_][a-zA-Z0-9_]*:",
+          "name": "entity.name.label.local.asm"
+        },
+        {
+          "match": ":",
+          "name": "entity.name.label.anonymous.asm"
+        },
+        {
+          "begin": ";;",
+          "end": "(?:(?:\\n)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#annotation"
+            }
+          ]
+        },
+        {
+          "begin": ";",
+          "end": "(?:(?:\\n)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_0"
+            }
+          ]
+        },
+        {
+          "match": "(\\.(?i:proc))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.function.asm"
+            }
+          }
+        },
+        {
+          "match": "(\\.(?i:scope))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.scope.asm"
+            }
+          }
+        },
+        {
+          "begin": "(\\.(?i:mac|macro))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.macro.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#macro-parms"
+            }
+          ]
+        },
+        {
+          "match": "(?i:(ECHO)\\b\\s*({{[\\s\\S]+}}))",
+          "captures": {
+            "1": {
+              "name": "keyword.asm"
+            },
+            "2": {
+              "name": "string.unquoted.asm"
+            }
+          }
+        },
+        {
+          "begin": "(?i:(MAC|MACRO)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b)",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.macro.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#macro-parms"
+            }
+          ]
+        },
+        {
+          "match": "(?i:(ENDM|MEXIT)\\b)",
+          "name": "keyword.asm"
+        },
+        {
+          "match": "(?i:(PROCESSOR)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.processor.asm"
+            }
+          }
+        },
+        {
+          "include": "#unknown-fallback"
+        }
+      ]
+    },
+    "annotation": {
+      "name": "entity.name.type.annotation.asm",
+      "patterns": [
+        {
+          "begin": "#",
+          "end": "(?:(?:(\\s*)(([*;]?).*)$)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "comment.line.asm punctuation.definition.comment.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments-eol"
+            }
+          ]
+        }
+      ]
+    },
+    "macro-parms": {
+      "patterns": [
+        {
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+          "name": "variable.parameter.macro.asm"
+        }
+      ]
+    },
+    "define-parms": {
+      "patterns": [
+        {
+          "begin": "\\)",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+          "name": "variable.parameter.define.asm"
+        },
+        {
+          "match": "\\,"
+        },
+        {
+          "match": "\\S",
+          "name": "invalid.illegal"
+        }
+      ]
+    },
+    "opcode": {
+      "contentName": "meta.opcode",
+      "patterns": [
+        {
+          "include": "#directives"
+        },
+        {
+          "include": "#mnemonics-6502"
+        },
+        {
+          "include": "#mnemonics-65c02"
+        },
+        {
+          "include": "#mnemonics-65816"
+        },
+        {
+          "include": "#mnemonics-65816-alt"
+        },
+        {
+          "include": "#mnemonics-macpack-generic"
+        },
+        {
+          "include": "#mnemonics-macpack-longbranch"
+        }
+      ]
+    },
+    "unknown-fallback": {
+      "patterns": [
+        {
+          "begin": "([a-zA-Z_][a-zA-Z0-9_]*:?)\\s+([A-Z]+[a-z]+[a-zA-Z0-9]*|[a-z]+([A-Z0-9]+[a-z]*)+)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.label.asm"
+            },
+            "2": {
+              "name": "entity.name.function.macro-call.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#opcode"
+            }
+          ],
+          "contentName": "meta.opcode"
+        },
+        {
+          "begin": "\\s([A-Z]+[a-z]+[a-zA-Z0-9]*|[a-z]+([A-Z0-9]+[a-z]*)+)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.function.macro-call.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "(?=\\S)",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#opcode"
+            }
+          ],
+          "contentName": "meta.opcode"
+        }
+      ]
+    },
+    "directives": {
+      "patterns": [
+        {
+          "begin": "(\\.(?i:define))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "end": "(?:(?:\\n)|(?=$))",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.directive keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.define.asm"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "invalid.illegal"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#define-parms"
+            }
+          ]
+        },
+        {
+          "begin": "(\\.(?i:define))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.directive keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.define.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "(\\.(?i:enum))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.directive keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.enum.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "(\\.(?i:struct|union))\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.directive keyword.asm"
+            },
+            "2": {
+              "name": "entity.name.struct.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:if|endif|else|elseif)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.control.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:include|incbin)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.control.import.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:byte|word)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.data.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:A16|A8|ADDR|ALIGN|ASCIIZ|ASSERT|AUTOIMPORT|BANKBYTES|BSS|BYT|BYTE|CASE|CHARMAP|CODE|CONDES|CONSTRUCTOR)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:DATA|DBYT|DEBUGINFO|DEF|DEFINE|DEFINED|DESTRUCTOR|DWORD|ELSE|ELSE|END|ENDENUM|ENDIF|ENDMAC|ENDMACRO|ENDPROC|ENDREP|ENDREPEAT|ENDSCOPE|ENDSTRUCT|ENUM|ERROR|EXITMAC|EXITMACRO|EXPORT|EXPORTZP)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:FARADDR|FEATURE|FILEOPT|FOPT|FORCEIMPORT|GLOBAL|GLOBALZP|HIBYTES|I16|I8|IF|IFCONST|IFDEF|IFNBLANK|IFNDEF|IFP02|IFP816|IFPC02|IFPSC02|IFREF|IMPORT|IMPORTZP|INCBIN|INCLUDE|INTERRUPTOR)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:LINECONT|LIST|LISTBYTES|LOBYTES|LOCAL|LOCALCHAR|MACPACK|MAC|MACRO|R?ORG|OUT|PO2|P816|PAGELEN|PAGELENGTH|PC02|POPSEG|PROC|PSC02|PUSHSEG)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "begin": "\\.(?i:RELOC|REPEAT|RES|RODATA|SCOPE|SEGMENT|SETCPU|SMART|STRUCT|SUNPLUS|TAG|WARNING|WORD|ZEROPAGE)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.directive keyword.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        },
+        {
+          "match": "\\.[a-zA-Z_][a-zA-Z0-9_]*",
+          "name": "meta.directive"
+        }
+      ]
+    },
+    "appleii": {
+      "patterns": [
+        {
+          "match": "(([0-9a-fA-F]{2})+)",
+          "captures": {
+            "1": {
+              "name": "constant.numeric.byte.asm"
+            }
+          }
+        },
+        {
+          "begin": "\\b[a-zA-Z_][a-zA-Z0-9_]*:?",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "entity.name.label.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#opcode"
+            }
+          ],
+          "contentName": "meta.opcode"
+        },
+        {
+          "begin": "\\s+",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#opcode"
+            }
+          ],
+          "contentName": "meta.opcode"
+        },
+        {
+          "begin": "$",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#main"
+            }
+          ]
+        }
+      ]
+    },
+    "operand": {
+      "patterns": [
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#match-char"
+        },
+        {
+          "include": "#match-expr"
+        },
+        {
+          "begin": "$",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#main"
+            }
+          ]
+        },
+        {
+          "begin": "\\)",
+          "end": "(?:(?:\\n)|(?=$))",
+          "patterns": [
+            {
+              "include": "#anon_1"
+            }
+          ]
+        },
+        {
+          "match": "\\.(?i:CPU|PARAMCOUNT|TIME|VERSION)\\b",
+          "name": "support.constant.asm"
+        },
+        {
+          "match": "\\.(?i:BANKBYTE|BLANK|CONCAT|CONST|HIBYTE|HIWORD|IDENT|LEFT|LOBYTE|LOWORD|MATCH|MID|REF|REFERENCED|RIGHT|SIZEOF|STRAT|SPRINTF|STRING|STRLEN|TCOUNT|XMATCH)\\b",
+          "name": "support.function.asm"
+        },
+        {
+          "match": "\\.(?i:BITNOT|MOD|BITAND|BITXOR|SHL|SHR|BITOR|AND|XOR|OR|NOT)\\b",
+          "name": "keyword.operator.asm"
+        },
+        {
+          "match": "<<|>>|<>|<=|>=|\\|\\||&&",
+          "name": "keyword.operator.asm"
+        },
+        {
+          "match": "[-+~<>^*/&|=!]",
+          "name": "keyword.operator.asm"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "match": "\\b\\d+\\b",
+          "name": "constant.numeric.asm"
+        },
+        {
+          "match": "\\$[A-Fa-f0-9]+\\b",
+          "name": "constant.numeric.hex.asm"
+        },
+        {
+          "match": "\\b[A-Fa-f0-9]+h\\b",
+          "name": "constant.numeric.hex.asm"
+        },
+        {
+          "match": "\\%[01]+\\b",
+          "name": "constant.numeric.binary.asm"
+        }
+      ]
+    },
+    "comment": {
+      "patterns": [
+        {
+          "begin": ";",
+          "end": "(?:(?:\\n)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_2"
+            }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "end": "(?:(?:\")|(?:\\n)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.asm"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_3"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-6502": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:ADC|AND|ASL|BCC|BCS|BEQ|BIT|BMI|BNE|BPL|BRK|BVC|BVS|CLC|CLD|CLI|CLV|CMP|CPX|CPY|DEC|DEX|DEY|EOR|INC|INX|INY|JMP|JSR|LDA|LDX|LDY|LSR|NOP|ORA|PHA|PHP|PLA|PLP|ROL|ROR|RTI|RTS|SBC|SEC|SED|SEI|STA|STX|STY|TAX|TAY|TSX|TXA|TXS|TYA)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.6502.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-65c02": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:BRA|PHX|PHY|PLX|PLY|STP|STZ|TRB|TSB|WAI)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.65c02.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-65c02s": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:BBR|BBS|RMB|SMB)[0-7]\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.65c02s.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-65816": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:BRL|COP|JML|JSL|MVN|MVP|PEA|PEI|PER|PHB|PHD|PHK|PLB|PLD|REP|RTL|SEP|TCD|TCS|TDC|TSC|TXY|TYX|WDM|XBA|XCE)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.65816.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-65816-long": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:ADCL|ANDL|CMPL|EORL|LDAL|ORAL|SBCL|STAL)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.65816.long.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-65816-alt": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:BLT|BGE|CPA|DEA|INA|SWA|TAS|TSA)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.65816.alt.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-65c02-m740": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:CLT|COM|LDM|RRF|SET|TST)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.m740.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-sweet16": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:RTN|SET|LD|LDD|ST|STD|POP|POPD|STP|ADD|SUB|CPR|INR|DCR|BR|BNC|BC|BP|BM|BZ|BNZ|BM1|BNM1|BK|RS|BS)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.sweet16.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-macpack-generic": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:ADD|SUB|BGE|BLT|BGT|BLE|BNZ|BZE)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.macpack.generic.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "mnemonics-macpack-longbranch": {
+      "patterns": [
+        {
+          "begin": "\\b(?i:JEQ|JNE|JMI|JPL|JCS|JCC|JVS|JVC)\\b",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.mnemonic.macpack.longbranch.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#operand"
+            }
+          ]
+        }
+      ]
+    },
+    "match-expr": {
+      "patterns": [
+        {
+          "include": "#match-integers"
+        },
+        {
+          "include": "#match-operators"
+        },
+        {
+          "include": "#match-parens"
+        },
+        {
+          "include": "#match-sizeof"
+        },
+        {
+          "include": "#match-labels"
+        },
+        {
+          "include": "#match-characters"
+        }
+      ]
+    },
+    "match-integers": {
+      "patterns": [
+        {
+          "include": "#match-binary-integer"
+        },
+        {
+          "include": "#match-octal-integer"
+        },
+        {
+          "include": "#match-hex-integer"
+        },
+        {
+          "include": "#match-decimal-integer"
+        }
+      ]
+    },
+    "match-binary-integer": {
+      "patterns": [
+        {
+          "match": "(\\%)(?:[01][01]*)\\b",
+          "name": "constant.numeric.binary.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.binary.asm"
+            }
+          }
+        },
+        {
+          "match": "(?:[01][01]*)([bB])\\b",
+          "name": "constant.numeric.binary.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.binary.asm"
+            }
+          }
+        }
+      ]
+    },
+    "match-octal-integer": {
+      "patterns": [
+        {
+          "match": "(\\@)(?:[0-7][0-7]*)\\b",
+          "name": "constant.numeric.octal.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.octal.asm"
+            }
+          }
+        },
+        {
+          "match": "(?:[0-7][0-7]*)([oqOQ])\\b",
+          "name": "constant.numeric.octal.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.octal.asm"
+            }
+          }
+        }
+      ]
+    },
+    "match-hex-integer": {
+      "patterns": [
+        {
+          "match": "(\\$|0[Xx])(?:[0-9a-fA-F][0-9a-fA-F]*)\\b",
+          "name": "constant.numeric.hexadecimal.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.hexadecimal.asm"
+            }
+          }
+        },
+        {
+          "match": "(?:[0-9a-fA-F][0-9a-fA-F]*)([hH])\\b",
+          "name": "constant.numeric.hexadecimal.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.hexadecimal.asm"
+            }
+          }
+        }
+      ]
+    },
+    "match-decimal-integer": {
+      "patterns": [
+        {
+          "match": "(\\&)?(?:\\d\\d*)\\b",
+          "name": "constant.numeric.decimal.asm",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.numeric.decimal.asm"
+            }
+          }
+        }
+      ]
+    },
+    "match-operators": {
+      "patterns": [
+        {
+          "match": "<<|>>|&&|\\|\\|",
+          "name": "keyword.operator.arithmetic.asm"
+        },
+        {
+          "match": "\\*",
+          "name": "keyword.operator.arithmetic.asm"
+        },
+        {
+          "match": "\\+|\\-|/|%|\\||\\^|\\~|!|\\&",
+          "name": "keyword.operator.arithmetic.asm"
+        }
+      ]
+    },
+    "match-parens": {
+      "patterns": [
+        {
+          "begin": "\\(",
+          "end": "(?:(?:\\))|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.parens.begin.asm"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.parens.end.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_4"
+            }
+          ]
+        }
+      ]
+    },
+    "match-comma": {
+      "patterns": [
+        {
+          "match": "\\,",
+          "name": "operator.separator.asm"
+        }
+      ]
+    },
+    "match-char": {
+      "patterns": [
+        {
+          "begin": "\\'",
+          "end": "(?:(?:\\S(\\'?))|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.char.begin.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_5"
+            }
+          ]
+        }
+      ]
+    },
+    "match-characters": {
+      "patterns": [
+        {
+          "begin": "\\'",
+          "end": "(?:(?:\\S(\\'?))|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.char.begin.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_6"
+            }
+          ]
+        },
+        {
+          "begin": "\\\"",
+          "end": "(?:(?:\\S\\S(\\\"?))|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.char.begin.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_7"
+            }
+          ]
+        }
+      ]
+    },
+    "match-labels": {
+      "patterns": [
+        {
+          "match": "A(?:DRESS|FP|LLPOT|TACHR|TRACT|PPMHI|UD(?:[CF][1-4]|CTL))|B(?:ASICF|FENHI|FENLO|FF[0ACE]|ININT|ITMSK|LIM|OOT(?:AD|Q)|OTSCR|PTR|RKBYT|RKKEY|UF(?:ADR|CNT|RFL|RHI|RLO|STR))|C(?:A(?:RTCK|SBUF|SFLG|SINI|SSBT|UX[12])|BAUD[HL]|COMND|DEVIC|DTM(?:5|A[12]|F[34]|V[1-5])|H(?:|1|ACTL?|AR|BASE?|KSNT|KSUM|LINK|SALT)|IOV|IX|KEY|MCMD|OL(?:AC|CRS|DST|INC|OR[0-4]|PF1|RSH)|ONSOL|OUNTR|RETRY|RITIC|RSINH|V[AI]FP|VFASC)|D(?:ATAD|ATALN|AUX[12]|BSECT|BUF(?:HI|LO)|BYT(?:HI|LO)|COMND|DEVIC|EGFLG|ELTA[CR]|ERRF|FLAGS|IGRT|INDEX|LIST[HL]|MACTL|MAS(?:AV|K)|OS(?:INI|VEC)|RETRY|RKMSK|S(?:CTLN|KTIM|PFLG|TATS?)|TIMLO|UNIT|UNUSE|VSTAT)|E(?:EXP|NDPT|RRFLG|SCFLG|SIGN|XP(?:|10))|F(?:ADD|ASC|CHRFLG|DIV|EOF|IL(?:DAT|FLG)|INE|KDEF|LD[01][PR]|MOVE|MUL|PI|R[2E]|R[01]M?|REQ|RX|ST0[PR]|STOR|SUB|TYPE)|G(?:BYTEA|INTLK|LBABS|PRIOR)|H(?:ATABS|ELPFL?G|IBYTE|IMEM|NDLOD|OLD(?:[1-4]|CH)|SCROL)|I(?:CAU?X[1-6]Z?|CB(?:[AL][HL]Z?)|CCOM[TZ]?|C(?:DNO|HID|PTH|PTL|PUT|STA)Z?|FP|N(?:BUFF|ITAD|SDAT|TEMP|VFLG)|OCB|RQEN|RQST)|JVECK|KBCODE|KEY(?:DEF|DEL|DIS|REP)|KRPDEL|L(?:BUFF|COUNT|MARGN|NFLG|OMEM|OADAD|OG(?:|10|COL|MAP)|PEN[HV]|TEMP)|M(?:EMLO|EMTOP|LTTMP|V0TO1)|N(?:EWADR|EW(?:COL|ROW)|GFLAG|MI(?:EN|RES|ST)|OCKSM|OCLIK|SIGN)|OLD(?:ADR|CHR|COL|ROW)|OUTBUFF|P(?:[AB]CTL|ADDL[0-7]|AL|ALNTS|BPNT|BUFSZ|COLR[0-3]|DMSK|DVMSK|DVS|EN[HV]|LYEVL|MBASE|OKADR|OKMSK|ORT[AB]|OT(?:[0-7]|GO)|PTMP[AX]|RIOR|RNBUF|TABW|TIMOT|TRIG[0-7]|UPBT[123])|R(?:ADFLG|AM(?:LO|SIZ|TOP)|ANDOM|EC(?:LEN|VDN)|ELADR|MARGN|NDLOC|OW(?:AC|CRS|INC)|TCLOK|UNADR?|UNSTK)|S(?:AV(?:ADR|IO|MSC)|CRFLG|DLST[HL]|DMCTL|ELFSV|ERIN|EROUT|GNFLG|HF(?:AMT|LOK)|HPDVS|K(?:BLANKS?|PBLANK|CTL|IP_SPACES|RES|STAT)|OUNDR|RTIMR|SFLAG|SKCTL|T(?:ACKP|ARP|ATUS|ICK[0-3]|IMER|MTAB|MCUR|OPLN|RIG[0-3])|UBTMP|UPERF|WPFLG)|TABMAP|TEMP[123]?|TEMPOR|TIM(?:ER[12]|FLG)|TINDEX|TMP(?:COL|LBT|ROW)|TRAMSZ|TRIG[0-3]|TSTAT|TXT(?:COL|MSC|OLD|ROW)|V(?:BR(?:EAK|KKY)|COUNT|DSLST|IMIRQ|INTER|KEYBD|NT[DP]|PIRQ|PRCED|SCROL|SER(?:IN|OC|OR)|SFLAG|TIMR[124]|VBLK[DI]|VTP)|W(?:ARMST|MODE|SYNC)|XFMFLG|XMTDON|Z(?:CHAIN|F1|FR0|IO?CB|LOADA)",
+          "name": "entity.name.constant.atari.asm"
+        },
+        {
+          "match": "(?i:[a-z\\.\\@\\_!\\?][a-z0-9\\.\\@\\$\\_\\?]*)|([0-9](?!\\S))",
+          "name": "constant.other.label.asm"
+        }
+      ]
+    },
+    "match-sizeof": {
+      "patterns": [
+        {
+          "begin": "(?i:sizeof(\\b))",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "support.function.directive.structure.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_8"
+            }
+          ]
+        }
+      ]
+    },
+    "match-strings": {
+      "patterns": [
+        {
+          "begin": "\\\"",
+          "end": "(?=$)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_9"
+            }
+          ]
+        },
+        {
+          "begin": "\\'",
+          "end": "(?=$)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_10"
+            }
+          ]
+        },
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_0": {
+      "name": "comment.line.asm",
+      "patterns": []
+    },
+    "anon_1": {
+      "name": "invalid.error.syntax.asm",
+      "patterns": []
+    },
+    "anon_2": {
+      "name": "comment.line.asm",
+      "patterns": []
+    },
+    "anon_3": {
+      "name": "string.quoted.double.asm",
+      "patterns": [
+        {
+          "match": "\\\\\\\"|[^\"\\n]"
+        }
+      ]
+    },
+    "anon_4": {
+      "patterns": [
+        {
+          "include": "#pop-on-eol"
+        },
+        {
+          "include": "#match-expr"
+        }
+      ]
+    },
+    "anon_5": {
+      "name": "string.quoted.single.asm",
+      "patterns": [
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_6": {
+      "name": "string.quoted.single.asm",
+      "patterns": [
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_7": {
+      "name": "string.quoted.double.asm",
+      "patterns": [
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_8": {
+      "patterns": [
+        {
+          "begin": "\\{",
+          "end": "(?:(?:\\})|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.parens.begin.asm"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.parens.end.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#anon_11"
+            }
+          ]
+        },
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_9": {
+      "name": "string.quoted.double.asm",
+      "patterns": [
+        {
+          "begin": "\\\"",
+          "end": "(?:(?:(\\s*)(([*;]?).*)$)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments-eol"
+            }
+          ]
+        },
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_10": {
+      "name": "string.quoted.single.asm",
+      "patterns": [
+        {
+          "begin": "\\'",
+          "end": "(?:(?:(\\s*)(([*;]?).*)$)|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.asm"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments-eol"
+            }
+          ]
+        },
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    },
+    "anon_11": {
+      "patterns": [
+        {
+          "include": "#match-expr"
+        },
+        {
+          "include": "#pop-on-eol"
+        }
+      ]
+    }
+  },
+  "fileTypes": [
+    "dasm",
+    "asm",
+    "s",
+    "m65",
+    "a65",
+    "inc",
+    "6502"
+  ]
+}
