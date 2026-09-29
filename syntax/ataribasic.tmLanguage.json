@@ -22,7 +22,7 @@
     },
     {
       "begin": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))\\s*ERROR\\s*-.*",
-      "end": "(?=:|$)",
+      "end": "(?!\\G)(?<=\\S)|(?=:|$)",
       "beginCaptures": {
         "0": {
           "name": "invalid.error.line.ataribasic"
@@ -99,7 +99,7 @@
         },
         {
           "begin": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))\\s*ERROR\\s*-.*",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "invalid.error.line.ataribasic"
@@ -206,7 +206,7 @@
         },
         {
           "begin": "(CLR)|(CON[T.])|(DEG)|(POP)|(RAD)|(CLOAD)|(CS(AV[E.]|A?\\.))",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "1": {
               "name": "keyword.clr.ataribasic"
@@ -238,7 +238,7 @@
         },
         {
           "begin": "(B(YE|Y?\\.))|(DOS)|(END)|(NEW)|(STO[P.])|(RET(UR[N.]|U?\\.))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.bye.ataribasic"
@@ -282,7 +282,7 @@
         },
         {
           "begin": "(\\?|PR(IN[T.]|N?.))\\s*(#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.print.ataribasic"
@@ -329,7 +329,7 @@
         },
         {
           "begin": "(I(NPU[T.]|(NP?)?\\.))\\s*(#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.input.ataribasic"
@@ -361,7 +361,7 @@
         },
         {
           "begin": "(CL(OS[E.]|O?\\.))\\s*(#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.close.ataribasic"
@@ -378,7 +378,7 @@
         },
         {
           "begin": "(O(PE[.N]|P?\\.))\\s*(#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.open.ataribasic"
@@ -395,7 +395,7 @@
         },
         {
           "begin": "((GET)|(PUT)|(ST(ATU[S.]|(AT?)?\\.)))\\s*(#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "2": {
               "name": "keyword.get.ataribasic"
@@ -432,7 +432,7 @@
         },
         {
           "begin": "((NO(T[E.]|\\.))|(P(OIN[T.]|(OI?)?\\.)))\\s*(#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "2": {
               "name": "keyword.note.ataribasic"
@@ -496,7 +496,7 @@
         },
         {
           "begin": "N(EX[T.]|E?\\.)",
-          "end": "(?!(?:[A-Z][A-Z0-9]*))",
+          "end": "(?!\\G)(?<=\\S)|(?!(?:[A-Z][A-Z0-9]*))",
           "beginCaptures": {
             "0": {
               "name": "keyword.next.ataribasic"
@@ -510,7 +510,7 @@
         },
         {
           "begin": "T(RA[P.]|R?\\.)",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.trap.ataribasic"
@@ -539,7 +539,7 @@
         },
         {
           "begin": "C(OLO[R.]|(OL?)?\\.)",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.color.ataribasic"
@@ -568,7 +568,7 @@
         },
         {
           "begin": "GR(APHIC[S.]|(A(P(HI?)?)?)?\\.)",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.graphics.ataribasic"
@@ -687,7 +687,7 @@
         },
         {
           "begin": "(LO(AD|A?\\.))|(S(AV[E.]|A?\\.))|(E(NT?)?\\.|ENTE[R.])",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "1": {
               "name": "keyword.load.ataribasic"
@@ -737,7 +737,7 @@
         },
         {
           "begin": "GOS(UB|U?\\.)",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.gosub.ataribasic"
@@ -751,7 +751,7 @@
         },
         {
           "begin": "ON",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.on.ataribasic"
@@ -766,7 +766,7 @@
         },
         {
           "begin": "IF",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?:(?=:|$)|(?=\\S)(?!(?::\\s*$)|(?::|$)|(?:([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:.))|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.if.ataribasic"
@@ -817,7 +817,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(RE[M.]|R?\\.))|(?:(D(AT[A.]|A?\\.))\\s*)|(?:RES(TOR[E.]|(TO?)?\\.))|(?:(CLR)|(CON[T.])|(DEG)|(POP)|(RAD)|(CLOAD)|(CS(AV[E.]|A?\\.)))|(?:(B(YE|Y?\\.))|(DOS)|(END)|(NEW)|(STO[P.])|(RET(UR[N.]|U?\\.)))|(?:RU[N.])|(?:(\\?|PR(IN[T.]|N?.))\\s*(#))|(?:\\?|PR(INT|(IN?)?\\.))|(?:(LP(RINT|(R(IN?)?)?\\.)))|(?:(I(NPU[T.]|(NP?)?\\.))\\s*(#))|(?:I(NPU[T.]|(NP?)?\\.))|(?:(CL(OS[E.]|O?\\.))\\s*(#))|(?:(O(PE[.N]|P?\\.))\\s*(#))|(?:((GET)|(PUT)|(ST(ATU[S.]|(AT?)?\\.)))\\s*(#))|(?:X(IO|I?\\.))|(?:((NO(T[E.]|\\.))|(P(OIN[T.]|(OI?)?\\.)))\\s*(#))|(?:COM)|(?:DIM)|(?:F(OR|O?\\.))|(?:N(EX[T.]|E?\\.))|(?:T(RA[P.]|R?\\.))|(?:POK[E.])|(?:C(OLO[R.]|(OL?)?\\.))|(?:DR(AWT[O.]|(AW?)?\\.))|(?:GR(APHIC[S.]|(A(P(HI?)?)?)?\\.))|(?:LOC(AT[E.]|A?\\.))|(?:POS(ITIO[N.]|(I(TI?)?)?\\.))|(?:PL(OT|O?\\.))|(?:SE(TCOLO[R.]|(T(C(OL?)?)?)?\\.))|(?:SO(UN[D.]|U?\\.))|(?:REA[D.])|(?:L(IS[T.]|I?\\.))|(?:(LO(AD|A?\\.))|(S(AV[E.]|A?\\.))|(E(NT?)?\\.|ENTE[R.]))|(?:G(OT[O.]|O?\\.))|(?:GO TO)|(?:GOS(UB|U?\\.))|(?:ON)|(?:IF)|(?:(LE[T.])?([A-Z][A-Z0-9]*\\$))|(?:(LE[T.])?([A-Z][A-Z0-9]*)))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -838,7 +838,7 @@
         },
         {
           "begin": "\\,",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "support.token.delimiter.list.1.ataribasic"
@@ -855,7 +855,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:\\,))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -872,7 +872,7 @@
         },
         {
           "begin": "(\\#)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "support.token.iocb.ataribasic"
@@ -886,7 +886,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(\\#)))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -904,7 +904,7 @@
         },
         {
           "begin": "(:|$|(GOTO|GOSUB)\\b)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -982,7 +982,7 @@
         },
         {
           "begin": "[^\\d]",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1033,7 +1033,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1071,7 +1071,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:\\())",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#cmd_let_equals"
@@ -1089,7 +1089,7 @@
         },
         {
           "begin": "=",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "keyword.operator.assignment.ataribasic"
@@ -1103,7 +1103,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:=))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1121,7 +1121,7 @@
         },
         {
           "begin": ":|$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1134,7 +1134,7 @@
         },
         {
           "begin": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "constant.numeric.line-number.ataribasic"
@@ -1176,7 +1176,7 @@
         },
         {
           "begin": "[A-Z][A-Z0-9]*",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "variable.float.ataribasic"
@@ -1332,7 +1332,7 @@
         },
         {
           "begin": "[a-z\\$\\%]",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1342,7 +1342,7 @@
         },
         {
           "begin": "CHR\\$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "meta.function-call.chrS.ataribasic"
@@ -1356,7 +1356,7 @@
         },
         {
           "begin": "STR\\$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "meta.function-call.str.ataribasic"
@@ -1370,7 +1370,7 @@
         },
         {
           "begin": "(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.fre.ataribasic"
@@ -1481,7 +1481,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:\\())",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1584,7 +1584,7 @@
         },
         {
           "begin": "\\)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1656,7 +1656,7 @@
         },
         {
           "begin": "[^)]*(;:|$)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1746,7 +1746,7 @@
         },
         {
           "begin": "\\)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1799,7 +1799,7 @@
         },
         {
           "begin": "[^\":]*$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1858,7 +1858,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1889,7 +1889,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?::))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1956,7 +1956,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_eat_modifier"
@@ -1974,7 +1974,7 @@
         },
         {
           "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "constant.numeric.float.ataribasic"
@@ -1989,7 +1989,7 @@
         },
         {
           "begin": "(NOT)|(-)|(\\+)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.operator.logic.ataribasic"
@@ -2010,7 +2010,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(NOT)|(-)|(\\+)))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_wants_value"
@@ -2028,7 +2028,7 @@
         },
         {
           "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "constant.numeric.float.ataribasic"
@@ -2043,7 +2043,7 @@
         },
         {
           "begin": "NOT|[-+]",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2053,7 +2053,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:NOT|[-+]))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_wants_value"
@@ -2071,7 +2071,7 @@
         },
         {
           "begin": "CHR\\$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "meta.function-call.chrS.ataribasic"
@@ -2085,7 +2085,7 @@
         },
         {
           "begin": "STR\\$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "meta.function-call.str.ataribasic"
@@ -2099,7 +2099,7 @@
         },
         {
           "begin": "(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.fre.ataribasic"
@@ -2191,7 +2191,7 @@
         },
         {
           "begin": "(?=\\\")",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "applyEndPatternLast": 1,
           "patterns": [
             {
@@ -2221,7 +2221,7 @@
         },
         {
           "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "variable.float.ataribasic"
@@ -2236,7 +2236,7 @@
         },
         {
           "begin": "THEN|GOTO|GOSUB",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "invalid.error.reserved-word.ataribasic"
@@ -2251,7 +2251,7 @@
         },
         {
           "begin": "[A-Z][A-Z0-9]*\\$",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:(\\())|(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "variable.string.ataribasic"
@@ -2266,7 +2266,7 @@
         },
         {
           "begin": "[A-Z][A-Z0-9]*",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:(\\())|(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "variable.float.ataribasic"
@@ -2281,7 +2281,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:CHR\\$)|(?:STR\\$)|(?:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG))|(?:\\()|(?:(?=\\\"))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:THEN|GOTO|GOSUB)|(?:[A-Z][A-Z0-9]*\\$)|(?:[A-Z][A-Z0-9]*))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2299,7 +2299,7 @@
         },
         {
           "begin": "((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2309,7 +2309,7 @@
         },
         {
           "begin": "[-+*/^]",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.operator.math.ataribasic"
@@ -2324,7 +2324,7 @@
         },
         {
           "begin": "<>|[<>]=?|=|AND|OR",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.operator.logic.ataribasic"
@@ -2339,7 +2339,7 @@
         },
         {
           "begin": "(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.then.ataribasic"
@@ -2371,7 +2371,7 @@
         },
         {
           "begin": "([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\(",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2389,7 +2389,7 @@
         },
         {
           "begin": "(<>|[<>]=?|=)\\s*(:|$)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2399,7 +2399,7 @@
         },
         {
           "begin": "<>|[<>]=?|=",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.operator.logic.ataribasic"
@@ -2414,7 +2414,7 @@
         },
         {
           "begin": "(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.then.ataribasic"
@@ -2446,7 +2446,7 @@
         },
         {
           "begin": "([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\(",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2479,7 +2479,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(\\()))",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "patterns": [
             {
               "include": "#expr_wants_operator"
@@ -2500,7 +2500,7 @@
         },
         {
           "begin": "\"",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "punctuation.definition.string.close.ataribasic"
@@ -2515,7 +2515,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[^\":]+)|(?:\"))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2533,7 +2533,7 @@
         },
         {
           "begin": "[^)]*(;:|$)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2546,7 +2546,7 @@
         },
         {
           "begin": "\\)",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "support.paren.close.subscript.ataribasic"
@@ -2565,7 +2565,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[^)]*(;:|$))|(?:\\))|(?:\\,))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_eat_modifier"
@@ -2583,7 +2583,7 @@
         },
         {
           "begin": "[A-Z][A-Z0-9]*\\$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2593,7 +2593,7 @@
         },
         {
           "begin": "[A-Z][A-Z0-9]*",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:(\\())|(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "variable.float.ataribasic"
@@ -2608,7 +2608,7 @@
         },
         {
           "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "constant.numeric.float.ataribasic"
@@ -2623,7 +2623,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[A-Z][A-Z0-9]*\\$)|(?:[A-Z][A-Z0-9]*)|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2640,7 +2640,7 @@
         },
         {
           "begin": "[A-Z][A-Z0-9]*\\$",
-          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=\\S)(?!(?:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))|(?:[-+*/^])|(?:<>|[<>]=?|=|AND|OR)|(?:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))|(?:THEN)|(?:(GOTO)|(GOSUB))|(?:([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\())|(?=$))",
           "beginCaptures": {
             "0": {
               "name": "variable.string.ataribasic"
@@ -2658,7 +2658,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[A-Z][A-Z0-9]*\\$))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2738,7 +2738,7 @@
         },
         {
           "begin": "\\)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2748,7 +2748,7 @@
         },
         {
           "begin": "[:$]",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2769,7 +2769,7 @@
         },
         {
           "begin": "([,;:]|$)",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2796,7 +2796,7 @@
         },
         {
           "begin": ":|$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2806,7 +2806,7 @@
         },
         {
           "begin": "(,)",
-          "end": "(?:(?=:|$)|(?=$))",
+          "end": "(?!\\G)(?<=\\S)|(?:(?=:|$)|(?=$))",
           "beginCaptures": {
             "1": {
               "name": "support.token.delimiter.list.1.ataribasic"
@@ -2831,7 +2831,7 @@
         },
         {
           "begin": ":|$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2867,7 +2867,7 @@
         },
         {
           "begin": ":|$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2902,7 +2902,7 @@
         },
         {
           "begin": ":\\s*$",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2953,7 +2953,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[^\":]+))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2971,7 +2971,7 @@
         },
         {
           "begin": "((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2981,7 +2981,7 @@
         },
         {
           "begin": "[-+*/^]",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.operator.math.ataribasic"
@@ -2996,7 +2996,7 @@
         },
         {
           "begin": "<>|[<>]=?|=|AND|OR",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "keyword.operator.logic.ataribasic"
@@ -3011,7 +3011,7 @@
         },
         {
           "begin": "(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "keyword.then.ataribasic"
@@ -3043,7 +3043,7 @@
         },
         {
           "begin": "([A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\(",
-          "end": "(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"

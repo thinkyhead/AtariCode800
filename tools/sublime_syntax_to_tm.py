@@ -361,6 +361,17 @@ class Converter:
             # stays open across ':' and swallows every later statement.
             if empty_pop and yields and not any('(?=:|$)' == p for p in parts):
                 parts.append('(?=:)')
+            # ...and it must ALSO pop wherever none of its own rules applies,
+            # which is what `match: ''` means. Without this, `?A;B` left
+            # expr_wants_operator open over the ';', swallowing PRINT's
+            # separator unscoped. `(?=\S)` lets the whitespace skip run first.
+            if empty_pop:
+                starts = []
+                for n in seen:           # every context the set-chain crosses
+                    starts += self.start_patterns(n)
+                if starts:
+                    parts.append('(?=\\S)(?!' + '|'.join(
+                        '(?:%s)' % s for s in dict.fromkeys(starts)) + ')')
             rx = '(?:' + '|'.join(parts) + '|(?=$))'
             result = (rx, scope)
         elif empty_pop:
@@ -456,6 +467,19 @@ class Converter:
         if empty_fallback and ':' not in end_rx \
                 and self.ends_at_delimiter(dests[-1]):
             end_rx = '(?:(?=:)|' + end_rx + ')'
+
+        # A ONE-SHOT destination (every rule transitions: set/pop) makes a
+        # single decision and is then gone in Sublime -- its `set:` child
+        # REPLACES it. TextMate only nests, so without help the chain of
+        # replaced states stays open until ':'/EOL and hides the statement
+        # underneath (PRINT's ';' after an expression was unreachable).
+        # `(?!\G)` closes the region as soon as scanning has moved past its
+        # own start, i.e. right after the child it chose has ended, so the
+        # chain collapses back to the nearest LOOP context. `(?<=\S)` keeps a
+        # whitespace skip from counting as "moved past".
+        if self.is_oneshot(dests[-1] if not isinstance(dests[-1], list)
+                           else self.intern_anon(dests[-1])):
+            end_rx = '(?!\\G)(?<=\\S)|' + end_rx
 
         region = {'begin': match_rx, 'end': end_rx}
 
@@ -574,6 +598,62 @@ class Converter:
                         'applyEndPatternLast': 1,
                         'patterns': [inner, {'include': '#' + cont_nf}]}
         return region
+
+    def start_patterns(self, ctx_name, _seen=None):
+        """Every non-empty, non-pop match reachable in `ctx_name` (via include)."""
+        seen = set() if _seen is None else _seen
+        if ctx_name in seen:
+            return []
+        seen.add(ctx_name)
+        out = []
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict):
+                continue
+            inc = r.get('include')
+            if isinstance(inc, str):
+                out += self.start_patterns(inc, seen)
+                continue
+            m = r.get('match')
+            if isinstance(m, str) and m not in ('', '$', '\\s+'):
+                m = fix_regex(expand_vars(m, self.variables))
+                out.append(strip_leading_optional_ws(m)[0])
+        return out
+
+    def is_oneshot(self, ctx_name, _seen=None):
+        """True if every rule reachable in `ctx_name` transitions (set/pop).
+
+        Such a context is a STATE, not a loop: it makes one decision and is
+        replaced. Includes are followed; the bare whitespace skip is ignored.
+        """
+        seen = set() if _seen is None else _seen
+        if ctx_name in seen:
+            return True
+        # A literal span (string/comment body) is not a decision state even
+        # if its rules are all pops: it consumes text until its terminator.
+        # Treating quoted_string as one-shot closed every string after its
+        # first character (`L."D:THIS.BAS"` split at the colon).
+        if _seen is None and not self.ends_at_delimiter(ctx_name) \
+                and ctx_name != 'code_line':
+            return False
+        seen.add(ctx_name)
+        found = False
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict):
+                continue
+            inc = r.get('include')
+            if isinstance(inc, str):
+                if not self.is_oneshot(inc, seen):
+                    return False
+                continue
+            if 'match' not in r:
+                continue
+            if r.get('set') is not None or r.get('pop'):
+                found = True
+                continue
+            if r['match'] == '\\s+':
+                continue
+            return False          # plain match or push: a loop
+        return found
 
     def intern_no_fallback(self, ctx_name):
         """`ctx_name` minus its catch-all error span.
