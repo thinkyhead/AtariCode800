@@ -54,3 +54,16 @@
 
 100 DIM F$(10),N$(12)
 #   ^^^ keyword.dim.ataribasic
+
+130 LET A$="X":B=1
+#   ^^^ keyword.let.ataribasic
+#       ^^ variable.string.ataribasic
+#               ^ variable.float.ataribasic
+
+140 ?"A";B,C
+#       ^ support.token.delimiter.concat.ataribasic
+#        ^ variable.float.ataribasic
+#         ^ support.token.delimiter.tab.ataribasic
+
+150 BYE:?"X"
+#       ^ invalid.warning.dead-code.ataribasic

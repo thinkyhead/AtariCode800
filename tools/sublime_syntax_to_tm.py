@@ -181,17 +181,24 @@ def targets_of(rule):
 
 
 def strip_leading_optional_ws(rx):
-    """Remove a leading `\\s*` (optionally preceded by an optional group).
+    """Stop a pattern from STARTING on whitespace.
 
-    `(LE[T.])?\\s*(...)` -> `(LE[T.])?(...)`, so the rule can no longer start on
-    the whitespace and steal the match from a keyword rule.
+    A bare leading `\\s*` is removed. When an optional group precedes it,
+    `(LE[T.])?\\s*(...)` -> `(?:(LE[T.])\\s*)?(...)`: the blank moves INSIDE
+    the optional group, so the pattern still cannot begin on a blank but the
+    group and the text after it may still be separated by one. Dropping the
+    `\\s*` outright (the earlier fix) broke `LET A`, which then scoped LET as
+    a variable name.
     """
     if not isinstance(rx, str):
         return rx, False
     m = re.match(r'^((?:\([^()]*\)\?|\[[^\]]*\]\?)?)\\s\*', rx)
     if not m:
         return rx, False
-    return m.group(1) + rx[m.end():], True
+    opt = m.group(1)
+    if opt:
+        return '(?:%s\\s*)?' % opt[:-1] + rx[m.end():], True
+    return rx[m.end():], True
 
 
 class Converter:
@@ -245,6 +252,16 @@ class Converter:
             self._literal_cache[ctx_name] = False
             return False
 
+        # A context that OWNS the delimiter -- it has its own non-pop rule
+        # for ':' (line_and_statement_should_end, expr_start_last and
+        # dead_code all turn the rest of the line into dead code there), or
+        # it runs a statement list (marked_dead includes code_line) -- must
+        # not hand ':' back, or that rule never runs and `BYE:?"X"` scoped
+        # the PRINT as live code.
+        if self.owns_delimiter(ctx_name):
+            self._literal_cache[ctx_name] = False
+            return False
+
         literal = False
         for r in self.contexts.get(ctx_name) or []:
             if not isinstance(r, dict):
@@ -256,6 +273,24 @@ class Converter:
                 break
         self._literal_cache[ctx_name] = not literal
         return not literal
+
+    def owns_delimiter(self, ctx_name, _seen=None):
+        """Has its own non-pop ':' rule, or includes a statement list."""
+        seen = set() if _seen is None else _seen
+        if ctx_name in seen:
+            return False
+        seen.add(ctx_name)
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict):
+                continue
+            inc = r.get('include')
+            if isinstance(inc, str):
+                if inc in STATEMENT_LIST_CONTEXTS or self.owns_delimiter(inc, seen):
+                    return True
+                continue
+            if r.get('match') in (':', "':'") and not r.get('pop'):
+                return True
+        return False
 
     def end_condition(self, ctx_name):
         """The regex that terminates a region entered into `ctx_name`.
