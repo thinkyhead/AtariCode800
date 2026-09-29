@@ -942,6 +942,7 @@ class Converter:
         if not isinstance(rules, list):
             return None
         entry, pats = {}, []
+        kinds = []                         # parallel to pats: 'set' / 'err' / ''
         for r in rules:
             if isinstance(r, dict):
                 if r.get('meta_scope'):
@@ -952,6 +953,13 @@ class Converter:
             c = self.conv_rule(r)
             if c:
                 pats.append(c)
+                if c.get('_delim_err'):
+                    kinds.append('err')
+                elif isinstance(r, dict) and r.get('set') is not None \
+                        and r.get('match'):
+                    kinds.append('set')
+                else:
+                    kinds.append('')
             # `match: '' / set: D` where D cannot end a statement (no pop, no
             # include, only `'' -> syntax_error` as its way out): reaching
             # ':' or EOL here is an error (`LET A`, `A`). The guarded
@@ -981,6 +989,29 @@ class Converter:
                 # region that TextMate then carried into the NEXT line --
                 # every line after the first fell into syntax_error.
                 p['begin'] = '(?=[^\\s:])(?!%s)' % guard
+
+        # A LOOP context that leaves by `set:` on a real token (two_exprs:
+        # `,` -> one_expr) and has a "statement ended too early" error.
+        # In Sublime the set REPLACES the context, so the error applies only
+        # BEFORE that token; nested in TextMate it stayed live after the
+        # set-child finished, and `POKE 1,2:` would go red. Scope the error
+        # and the context's other rules to a \G-anchored region that runs
+        # from the context's start up to the set token:
+        #   `POKE 10:` -> error;  `POKE 1,2:` -> fine.
+        # Its end is tried first but never matches ':', so the error rule
+        # (first inside) still claims a premature delimiter.
+        empty_set = any(isinstance(r, dict) and r.get('match') == ''
+                        and r.get('set') is not None for r in rules)
+        if 'err' in kinds and 'set' in kinds and not empty_set \
+                and not self.is_oneshot(name):
+            sets = [p for p, k in zip(pats, kinds) if k == 'set']
+            rest = [p for p, k in zip(pats, kinds) if k != 'set']
+            rest.sort(key=lambda p: not p.get('_delim_err'))   # errors first
+            for p in rest:
+                p.pop('_delim_err', None)
+            stop = '|'.join('(?:%s)' % p['begin'] for p in sets)
+            pats = [{'begin': '\\G', 'end': '(?=%s)|(?=$)' % stop,
+                     'patterns': rest, '_delim_err': True}] + sets
         entry['patterns'] = pats
         return entry
 

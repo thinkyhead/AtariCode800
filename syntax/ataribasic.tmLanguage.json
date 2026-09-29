@@ -1121,14 +1121,20 @@
       "contentName": "ctx.cmd_if.ataribasic",
       "patterns": [
         {
-          "match": "(?:\\s*:|$).*",
-          "name": "invalid.error.syntax.ataribasic"
+          "begin": "\\G",
+          "end": "(?=(?:([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?=$)",
+          "patterns": [
+            {
+              "match": "(?:\\s*:|$).*",
+              "name": "invalid.error.syntax.ataribasic"
+            },
+            {
+              "include": "#real_expr"
+            }
+          ]
         },
         {
           "match": "\\s+"
-        },
-        {
-          "include": "#real_expr"
         },
         {
           "begin": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))",
@@ -2535,14 +2541,34 @@
       "contentName": "ctx.expr_till_close.ataribasic",
       "patterns": [
         {
-          "match": "(?:[^)]*(;:|$)).*",
-          "name": "invalid.error.syntax.ataribasic"
+          "begin": "\\G",
+          "end": "(?=(?:\\)))|(?=$)",
+          "patterns": [
+            {
+              "match": "(?:[^)]*(;:|$)).*",
+              "name": "invalid.error.syntax.ataribasic"
+            },
+            {
+              "include": "#mixin_statement_end"
+            },
+            {
+              "match": "\\,",
+              "name": "support.token.delimiter.subscripts.ataribasic"
+            },
+            {
+              "begin": "(?=[^\\s:])(?!(?:(?:[^)]*(;:|$)).*)|(?:\\))|(?:\\,))",
+              "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+              "patterns": [
+                {
+                  "include": "#expr_eat_modifier"
+                }
+              ],
+              "contentName": "ctx.expr_eat_modifier.ataribasic"
+            }
+          ]
         },
         {
           "match": "\\s+"
-        },
-        {
-          "include": "#mixin_statement_end"
         },
         {
           "begin": "\\)",
@@ -2558,20 +2584,6 @@
             }
           ],
           "contentName": "ctx.expr_wants_operator.ataribasic"
-        },
-        {
-          "match": "\\,",
-          "name": "support.token.delimiter.subscripts.ataribasic"
-        },
-        {
-          "begin": "(?=[^\\s:])(?!(?:(?:[^)]*(;:|$)).*)|(?:\\))|(?:\\,))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
-          "patterns": [
-            {
-              "include": "#expr_eat_modifier"
-            }
-          ],
-          "contentName": "ctx.expr_eat_modifier.ataribasic"
         }
       ]
     },
@@ -2695,44 +2707,54 @@
     "mixin_some_exprs": {
       "patterns": [
         {
-          "match": "(?:[:$]).*",
-          "name": "invalid.error.syntax.ataribasic"
+          "begin": "\\G",
+          "end": "(?=(?:\\)))|(?=$)",
+          "patterns": [
+            {
+              "match": "(?:[:$]).*",
+              "name": "invalid.error.syntax.ataribasic"
+            },
+            {
+              "include": "#mixin_statement_end"
+            },
+            {
+              "include": "#mixin_string"
+            },
+            {
+              "match": "(<>|[<>]=?|=|AND|NOT|OR)",
+              "name": "keyword.operator.logic.ataribasic"
+            },
+            {
+              "include": "#mixin_values"
+            },
+            {
+              "begin": "\\(",
+              "end": "(?:(?:\\))|(?=$))",
+              "beginCaptures": {
+                "0": {
+                  "name": "support.paren.open.expr.ataribasic"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "support.paren.close.ataribasic"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#expr_paren_open"
+                }
+              ],
+              "contentName": "ctx.expr_paren_open.ataribasic"
+            },
+            {
+              "match": "([-+*/^])",
+              "name": "keyword.operator.math.ataribasic"
+            }
+          ]
         },
         {
           "match": "\\s+"
-        },
-        {
-          "include": "#mixin_statement_end"
-        },
-        {
-          "include": "#mixin_string"
-        },
-        {
-          "match": "(<>|[<>]=?|=|AND|NOT|OR)",
-          "name": "keyword.operator.logic.ataribasic"
-        },
-        {
-          "include": "#mixin_values"
-        },
-        {
-          "begin": "\\(",
-          "end": "(?:(?:\\))|(?=$))",
-          "beginCaptures": {
-            "0": {
-              "name": "support.paren.open.expr.ataribasic"
-            }
-          },
-          "endCaptures": {
-            "0": {
-              "name": "support.paren.close.ataribasic"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#expr_paren_open"
-            }
-          ],
-          "contentName": "ctx.expr_paren_open.ataribasic"
         },
         {
           "begin": "\\)",
@@ -2743,10 +2765,6 @@
             }
           ],
           "name": "invalid.error.syntax.ataribasic"
-        },
-        {
-          "match": "([-+*/^])",
-          "name": "keyword.operator.math.ataribasic"
         }
       ]
     },
@@ -2774,8 +2792,17 @@
       "contentName": "ctx.two_exprs.ataribasic",
       "patterns": [
         {
-          "match": "(?:\\s*:|$).*",
-          "name": "invalid.error.syntax.ataribasic"
+          "begin": "\\G",
+          "end": "(?=(?:(,)))|(?=$)",
+          "patterns": [
+            {
+              "match": "(?:\\s*:|$).*",
+              "name": "invalid.error.syntax.ataribasic"
+            },
+            {
+              "include": "#real_expr"
+            }
+          ]
         },
         {
           "match": "\\s+"
@@ -2793,9 +2820,6 @@
               "include": "#one_expr"
             }
           ]
-        },
-        {
-          "include": "#real_expr"
         }
       ]
     },
@@ -2803,8 +2827,17 @@
       "contentName": "ctx.three_exprs.ataribasic",
       "patterns": [
         {
-          "match": "(?:\\s*:|$).*",
-          "name": "invalid.error.syntax.ataribasic"
+          "begin": "\\G",
+          "end": "(?=(?:(,)))|(?=$)",
+          "patterns": [
+            {
+              "match": "(?:\\s*:|$).*",
+              "name": "invalid.error.syntax.ataribasic"
+            },
+            {
+              "include": "#real_expr"
+            }
+          ]
         },
         {
           "match": "\\s+"
@@ -2823,9 +2856,6 @@
             }
           ],
           "contentName": "ctx.two_exprs.ataribasic"
-        },
-        {
-          "include": "#real_expr"
         }
       ]
     },
@@ -2833,8 +2863,17 @@
       "contentName": "ctx.four_exprs.ataribasic",
       "patterns": [
         {
-          "match": "(?:\\s*:|$).*",
-          "name": "invalid.error.syntax.ataribasic"
+          "begin": "\\G",
+          "end": "(?=(?:(,)))|(?=$)",
+          "patterns": [
+            {
+              "match": "(?:\\s*:|$).*",
+              "name": "invalid.error.syntax.ataribasic"
+            },
+            {
+              "include": "#real_expr"
+            }
+          ]
         },
         {
           "match": "\\s+"
@@ -2853,9 +2892,6 @@
             }
           ],
           "contentName": "ctx.three_exprs.ataribasic"
-        },
-        {
-          "include": "#real_expr"
         }
       ]
     },
