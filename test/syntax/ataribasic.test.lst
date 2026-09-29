@@ -58,7 +58,7 @@
 130 LET A$="X":B=1
 #   ^^^ keyword.let.ataribasic
 #       ^^ variable.string.ataribasic
-#               ^ variable.float.ataribasic
+#              ^ variable.float.ataribasic
 
 140 ?"A";B,C
 #       ^ support.token.delimiter.concat.ataribasic
