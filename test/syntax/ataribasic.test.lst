@@ -29,6 +29,19 @@
 #    ^^^ keyword.operator.logic.ataribasic
 #       ^^^ ctx.cmd_if.ataribasic
 
+110 IF A THEN 20
+#   ^^ keyword.if.ataribasic
+#      ^ variable.float.ataribasic
+#        ^^^^ keyword.then.ataribasic
+#             ^^ constant.numeric.line-number.ataribasic
+
+120IFNOTYN THENRET.
+#  ^^ keyword.if.ataribasic
+#    ^^^ keyword.operator.logic.ataribasic
+#       ^^ variable.float.ataribasic
+#          ^^^^ keyword.then.ataribasic
+#              ^^^^ keyword.return.ataribasic
+
 70 FOR I=1 TO 10
 #  ^^^ keyword.for.ataribasic
 #          ^^ keyword.to.ataribasic

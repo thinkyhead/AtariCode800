@@ -2180,19 +2180,34 @@
           "contentName": "ctx.expr_till_close.ataribasic"
         },
         {
-          "begin": "\\\"",
-          "end": "(?=$)",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.open.ataribasic"
-            }
-          },
+          "begin": "(?=\\\")",
+          "end": "(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=$))",
+          "applyEndPatternLast": 1,
           "patterns": [
             {
-              "include": "#expr_eat_string"
+              "begin": "\\\"",
+              "end": "(?:\"|(?=$))",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.string.open.ataribasic"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#expr_eat_string__body"
+                }
+              ],
+              "name": "string.quoted.ataribasic",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.string.close.ataribasic"
+                }
+              }
+            },
+            {
+              "include": "#expr_wants_operator__nofallback"
             }
-          ],
-          "name": "string.quoted.ataribasic"
+          ]
         },
         {
           "begin": "[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)",
@@ -2255,7 +2270,7 @@
           "contentName": "ctx.expr_eat_subscript.ataribasic"
         },
         {
-          "begin": "(?=[^\\s:])(?!(?:(?i:CHR\\$))|(?:(?i:STR\\$))|(?:(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)))|(?:\\()|(?:\\\")|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:THEN|GOTO|GOSUB))|(?:(?i:[A-Z][A-Z0-9]*\\$))|(?:(?i:[A-Z][A-Z0-9]*)))",
+          "begin": "(?=[^\\s:])(?!(?:(?i:CHR\\$))|(?:(?i:STR\\$))|(?:(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)))|(?:\\()|(?:(?=\\\"))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:THEN|GOTO|GOSUB))|(?:(?i:[A-Z][A-Z0-9]*\\$))|(?:(?i:[A-Z][A-Z0-9]*)))",
           "end": "(?=:|$)",
           "patterns": [
             {
@@ -2471,10 +2486,13 @@
           "match": "\\s+"
         },
         {
-          "begin": "[^\":]*(\")",
+          "match": "[^\":]+"
+        },
+        {
+          "begin": "\"",
           "end": "(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=$))",
           "beginCaptures": {
-            "1": {
+            "0": {
               "name": "punctuation.definition.string.close.ataribasic"
             }
           },
@@ -2486,7 +2504,7 @@
           "contentName": "ctx.expr_wants_operator.ataribasic"
         },
         {
-          "begin": "(?=[^\\s:])(?!(?:[^\":]*(\")))",
+          "begin": "(?=[^\\s:])(?!(?:[^\":]+)|(?:\"))",
           "end": "(?=:|$)",
           "patterns": [
             {
@@ -2911,6 +2929,117 @@
         },
         {
           "include": "#expr_wants_operator"
+        }
+      ]
+    },
+    "expr_eat_string__body": {
+      "name": "string.quoted.ataribasic",
+      "patterns": [
+        {
+          "match": "\\s+"
+        },
+        {
+          "match": "[^\":]+"
+        },
+        {
+          "begin": "(?=[^\\s:])(?!(?:[^\":]+))",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#syntax_error"
+            }
+          ],
+          "name": "invalid.error.syntax.ataribasic"
+        }
+      ]
+    },
+    "expr_wants_operator__nofallback": {
+      "contentName": "ctx.expr_wants_operator.ataribasic",
+      "patterns": [
+        {
+          "match": "\\s+"
+        },
+        {
+          "begin": "(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$)))",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#syntax_error"
+            }
+          ],
+          "name": "invalid.error.syntax.ataribasic"
+        },
+        {
+          "begin": "[-+*/^]",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.operator.math.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#expr_eat_modifier"
+            }
+          ],
+          "contentName": "ctx.expr_eat_modifier.ataribasic"
+        },
+        {
+          "begin": "(?i:<>|[<>]=?|=|AND|OR)",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.operator.logic.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#expr_eat_modifier"
+            }
+          ],
+          "contentName": "ctx.expr_eat_modifier.ataribasic"
+        },
+        {
+          "begin": "(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))",
+          "end": "(?=:|$)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.then.ataribasic"
+            },
+            "2": {
+              "name": "constant.numeric.line-number.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#line_and_statement_should_end"
+            }
+          ]
+        },
+        {
+          "begin": "(?i:THEN)",
+          "end": "(?=$)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.then.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code_line"
+            }
+          ],
+          "contentName": "ctx.code_line.ataribasic"
+        },
+        {
+          "begin": "((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()",
+          "end": "(?=:|$)",
+          "patterns": [
+            {
+              "include": "#syntax_error"
+            }
+          ],
+          "name": "invalid.error.syntax.ataribasic"
         }
       ]
     }

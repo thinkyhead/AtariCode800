@@ -2190,6 +2190,9 @@
           "contentName": "ctx.expr_till_close.ataribasic"
         },
         {
+          "begin": "(?=\\\")",
+          "end": "(?:(?:(GOTO)|(GOSUB))|(?=:)|(?=$))",
+          "applyEndPatternLast": 1,
           "patterns": [
             {
               "begin": "\\\"",
@@ -2277,7 +2280,7 @@
           "contentName": "ctx.expr_eat_subscript.ataribasic"
         },
         {
-          "begin": "(?=[^\\s:])(?!(?:CHR\\$)|(?:STR\\$)|(?:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG))|(?:\\()|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:THEN|GOTO|GOSUB)|(?:[A-Z][A-Z0-9]*\\$)|(?:[A-Z][A-Z0-9]*))",
+          "begin": "(?=[^\\s:])(?!(?:CHR\\$)|(?:STR\\$)|(?:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG))|(?:\\()|(?:(?=\\\"))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:THEN|GOTO|GOSUB)|(?:[A-Z][A-Z0-9]*\\$)|(?:[A-Z][A-Z0-9]*))",
           "end": "(?=:|$)",
           "patterns": [
             {

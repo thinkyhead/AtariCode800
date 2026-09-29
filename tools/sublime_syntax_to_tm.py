@@ -558,9 +558,21 @@ class Converter:
                     # continuation WITHOUT its fallback so unhandled punctuation
                     # falls through to the enclosing statement, as it does in
                     # Sublime.
-                    region = {'patterns': [
-                        inner,
-                        {'include': '#' + self.intern_no_fallback(cont)}]}
+                    # A begin-less wrapper is NOT a sequence: it spliced the
+                    # continuation's rules into the enclosing context as live
+                    # alternatives, so expr_wants_operator's
+                    # `{{var}}|{{flt}}|(` -> syntax_error beat the real
+                    # variable rule and `IF A THEN 20` flagged `A` invalid.
+                    # Open a real region on the string's own opener instead,
+                    # ending when the continuation stops applying (its
+                    # `match: '' / pop`). applyEndPatternLast lets the string
+                    # claim the opening quote before that zero-width end runs.
+                    cont_nf = self.intern_no_fallback(cont)
+                    region = {
+                        'begin': '(?=%s)' % inner['begin'],
+                        'end': self.end_condition(cont)[0],
+                        'applyEndPatternLast': 1,
+                        'patterns': [inner, {'include': '#' + cont_nf}]}
         return region
 
     def intern_no_fallback(self, ctx_name):
