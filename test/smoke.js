@@ -375,6 +375,26 @@ sys.stdout.write(json.dumps(${JSON.stringify(sample)}.translate(m)))
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
+// --- 5. tokenizer sync with the canonical copy ------------------------
+// The canonical tokenizer lives in 6502-Tools/Sublime/AtariTools/basic and the
+// Sublime plugin runs those same files. Drift between it and python/ means the
+// two editors silently disagree, so fail the suite rather than let it pass.
+// SKIPs when the sibling repo is absent (a clean clone, or CI).
+{
+  const script = path.join(ROOT, 'tools', 'sync_tokenizer.sh');
+  const canon = path.join(os.homedir(), 'Projects', 'Retro', '6502-Tools',
+    'Sublime', 'AtariTools', 'basic');
+
+  if (!fs.existsSync(canon)) {
+    skip('python/ matches the canonical tokenizer', '6502-Tools not present');
+  } else {
+    const r = cp.spawnSync('bash', [script, '--check'], { encoding: 'utf8' });
+    check('python/ matches the canonical tokenizer', r.status === 0,
+      r.status === 0 ? '' : String(r.stdout || r.stderr).trim().split('\n')[0]);
+  }
+}
+
+
 // --- 4. the "Got BASIC?" downloader -----------------------------------
 // Network-dependent, so it SKIPs rather than fails when offline. Guards the
 // two things that actually broke in development: the repo's default branch is

@@ -25,8 +25,12 @@ happens, the modules here are small enough to port cleanly and the
 
 ## The single-source-of-truth rule
 
-`python/` holds a **vendored copy** of the tokenizer whose canonical home is
-`6502-Tools/Sublime/AtariTools/basic`.
+The tokenizer has ONE canonical home:
+
+    6502-Tools/Sublime/AtariTools/basic        <- CANONICAL
+
+Every other instance is a copy that must match it — this repo's `python/`, and
+any Sublime Packages deploy. `python/` holds a **vendored copy**, not a symlink.
 
 It used to be a symlink:
 
@@ -36,12 +40,35 @@ That worked in the old monorepo layout but cannot survive publication: a
 `.vsix` cannot contain a link that escapes the extension root, and a clean
 clone of this repo has no sibling to point at. So the seven files the tokenizer
 actually imports are copied in, and `tools/sync_tokenizer.sh` keeps them
-honest — `--check` reports drift and exits 1, a plain run copies and then
-proves the result still runs standalone.
+honest:
 
-Both editors still run the SAME tokenizer; the copy is mechanical and one-way.
-Never edit `python/` directly — change the canonical copy and re-sync, or the
-two implementations drift. The extension shells out to `basic.py`
+| command | direction |
+|---|---|
+| `tools/sync_tokenizer.sh` | canonical → `python/` (the normal direction) |
+| `--check` | report drift and which side is newer; exit 1 |
+| `--diff` | show what differs |
+| `--push` | `python/` → canonical, after confirming |
+
+Editing `python/` directly is allowed as a convenience, but it is a **loan, not
+a fork**: run `--push` to return the change, then re-run the 6502-Tools gates
+(`test_corpus.py`, `regression_check.py`) and test in Sublime, because the
+plugin runs those same files. `--check` runs in the smoke suite, so drift
+fails the tests rather than going unnoticed.
+
+### Why Python is still canonical
+
+Shelling out to Python is a real cost: an external dependency, a subprocess per
+tokenize, and no tokenizing inside isolated WebViews. The plan is to port the
+tokenizer to JavaScript so the extension can do all of it in-process.
+
+That port is deferred deliberately. The Python implementation is validated
+byte-for-byte against the real Atari BASIC ROM (currently 94.2% of the corpus,
+12/21 files exact), and a rewrite before that reaches confidence would mean
+debugging two unfinished implementations against each other. Python stays
+canonical until the ROM corpus says it is trustworthy; then the JS port gets
+the same corpus as its acceptance test.
+
+Both editors run the SAME tokenizer. The extension shells out to `basic.py`
 (`src/basic.js`), and `basic.py --json` returns everything the UI needs:
 
     python3 basic.py --json FILE.LST
