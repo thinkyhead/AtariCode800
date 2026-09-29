@@ -42,7 +42,7 @@ R.        ^ meta.function-call.atn.ataribasic
 R.  ^ keyword.print.ataribasic
 R.        ^ meta.function-call.clog.ataribasic
 R.                      ^ invalid.warning.dead-code.ataribasic
-R.                                        ^ - invalid.warning.dead-code.ataribasic
+R.                                        ^ comment.ataribasic
 100 PR.   COS(123)                      :.Comment
 R.  ^ keyword.print.ataribasic
 R.        ^ meta.function-call.cos.ataribasic
@@ -362,12 +362,12 @@ R.                     ^ invalid.error.syntax.ataribasic
 100 SO.C,P,D,V,X       :.Too many parameters
 R.           ^ - invalid.error.line-too-long.ataribasic invalid.error.line.ataribasic invalid.error.reserved-word.ataribasic invalid.error.syntax.ataribasic
 R.            ^ invalid.error.syntax.ataribasic
-100 ON X GOTO 10,7,T+1 :.Numeric only
+100 ON X GOTO 10,7,T+1 :.Numeric exprs OK
 R.                ^ - invalid.error.line-too-long.ataribasic invalid.error.line.ataribasic invalid.error.reserved-word.ataribasic invalid.error.syntax.ataribasic
-R.                 ^ invalid.error.syntax.ataribasic
-100 ON X GOSUB 99,Q    :.Numeric only
+R.                 ^ - invalid.error.line-too-long.ataribasic invalid.error.line.ataribasic invalid.error.reserved-word.ataribasic invalid.error.syntax.ataribasic
+100 ON X GOSUB 99,Q    :.Numeric exprs OK
 R.               ^ - invalid.error.line-too-long.ataribasic invalid.error.line.ataribasic invalid.error.reserved-word.ataribasic invalid.error.syntax.ataribasic
-R.                ^ invalid.error.syntax.ataribasic
+R.                ^ - invalid.error.line-too-long.ataribasic invalid.error.line.ataribasic invalid.error.reserved-word.ataribasic invalid.error.syntax.ataribasic
 
 
 

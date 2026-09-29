@@ -161,6 +161,10 @@
           "match": "\\s+"
         },
         {
+          "match": ":\\s*$",
+          "name": "invalid.error.syntax.ataribasic"
+        },
+        {
           "begin": "(RE[M.]|R?\\.)",
           "end": "(?=$)",
           "beginCaptures": {
@@ -816,7 +820,7 @@
           "name": "ctx.cmd_let.ataribasic"
         },
         {
-          "begin": "(?=[^\\s:])(?!(?:(RE[M.]|R?\\.))|(?:(D(AT[A.]|A?\\.))\\s*)|(?:RES(TOR[E.]|(TO?)?\\.))|(?:(CLR)|(CON[T.])|(DEG)|(POP)|(RAD)|(CLOAD)|(CS(AV[E.]|A?\\.)))|(?:(B(YE|Y?\\.))|(DOS)|(END)|(NEW)|(STO[P.])|(RET(UR[N.]|U?\\.)))|(?:RU[N.])|(?:(\\?|PR(IN[T.]|N?.))\\s*(#))|(?:\\?|PR(INT|(IN?)?\\.))|(?:(LP(RINT|(R(IN?)?)?\\.)))|(?:(I(NPU[T.]|(NP?)?\\.))\\s*(#))|(?:I(NPU[T.]|(NP?)?\\.))|(?:(CL(OS[E.]|O?\\.))\\s*(#))|(?:(O(PE[.N]|P?\\.))\\s*(#))|(?:((GET)|(PUT)|(ST(ATU[S.]|(AT?)?\\.)))\\s*(#))|(?:X(IO|I?\\.))|(?:((NO(T[E.]|\\.))|(P(OIN[T.]|(OI?)?\\.)))\\s*(#))|(?:COM)|(?:DIM)|(?:F(OR|O?\\.))|(?:N(EX[T.]|E?\\.))|(?:T(RA[P.]|R?\\.))|(?:POK[E.])|(?:C(OLO[R.]|(OL?)?\\.))|(?:DR(AWT[O.]|(AW?)?\\.))|(?:GR(APHIC[S.]|(A(P(HI?)?)?)?\\.))|(?:LOC(AT[E.]|A?\\.))|(?:POS(ITIO[N.]|(I(TI?)?)?\\.))|(?:PL(OT|O?\\.))|(?:SE(TCOLO[R.]|(T(C(OL?)?)?)?\\.))|(?:SO(UN[D.]|U?\\.))|(?:REA[D.])|(?:L(IS[T.]|I?\\.))|(?:(LO(AD|A?\\.))|(S(AV[E.]|A?\\.))|(E(NT?)?\\.|ENTE[R.]))|(?:G(OT[O.]|O?\\.))|(?:GO TO)|(?:GOS(UB|U?\\.))|(?:ON)|(?:IF)|(?:(?:(LE[T.])\\s*)?([A-Z][A-Z0-9]*\\$))|(?:(?:(LE[T.])\\s*)?([A-Z][A-Z0-9]*)))",
+          "begin": "(?=[^\\s:])(?!(?::\\s*$)|(?:(RE[M.]|R?\\.))|(?:(D(AT[A.]|A?\\.))\\s*)|(?:RES(TOR[E.]|(TO?)?\\.))|(?:(CLR)|(CON[T.])|(DEG)|(POP)|(RAD)|(CLOAD)|(CS(AV[E.]|A?\\.)))|(?:(B(YE|Y?\\.))|(DOS)|(END)|(NEW)|(STO[P.])|(RET(UR[N.]|U?\\.)))|(?:RU[N.])|(?:(\\?|PR(IN[T.]|N?.))\\s*(#))|(?:\\?|PR(INT|(IN?)?\\.))|(?:(LP(RINT|(R(IN?)?)?\\.)))|(?:(I(NPU[T.]|(NP?)?\\.))\\s*(#))|(?:I(NPU[T.]|(NP?)?\\.))|(?:(CL(OS[E.]|O?\\.))\\s*(#))|(?:(O(PE[.N]|P?\\.))\\s*(#))|(?:((GET)|(PUT)|(ST(ATU[S.]|(AT?)?\\.)))\\s*(#))|(?:X(IO|I?\\.))|(?:((NO(T[E.]|\\.))|(P(OIN[T.]|(OI?)?\\.)))\\s*(#))|(?:COM)|(?:DIM)|(?:F(OR|O?\\.))|(?:N(EX[T.]|E?\\.))|(?:T(RA[P.]|R?\\.))|(?:POK[E.])|(?:C(OLO[R.]|(OL?)?\\.))|(?:DR(AWT[O.]|(AW?)?\\.))|(?:GR(APHIC[S.]|(A(P(HI?)?)?)?\\.))|(?:LOC(AT[E.]|A?\\.))|(?:POS(ITIO[N.]|(I(TI?)?)?\\.))|(?:PL(OT|O?\\.))|(?:SE(TCOLO[R.]|(T(C(OL?)?)?)?\\.))|(?:SO(UN[D.]|U?\\.))|(?:REA[D.])|(?:L(IS[T.]|I?\\.))|(?:(LO(AD|A?\\.))|(S(AV[E.]|A?\\.))|(E(NT?)?\\.|ENTE[R.]))|(?:G(OT[O.]|O?\\.))|(?:GO TO)|(?:GOS(UB|U?\\.))|(?:ON)|(?:IF)|(?:(?:(LE[T.])\\s*)?([A-Z][A-Z0-9]*\\$))|(?:(?:(LE[T.])\\s*)?([A-Z][A-Z0-9]*)))",
           "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
@@ -964,25 +968,19 @@
           "include": "#mixin_statement_end"
         },
         {
-          "match": "(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?|[A-Z][A-Z0-9]*)\\s*(\\,)?",
+          "match": "([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))\\s*(?=,|:|$)",
           "captures": {
             "1": {
               "name": "constant.numeric.line-number.ataribasic"
-            },
-            "2": {
-              "name": "support.token.delimiter.list.ataribasic"
             }
           }
         },
         {
-          "begin": "[^\\d]",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
-          "patterns": [
-            {
-              "include": "#syntax_error"
-            }
-          ],
-          "name": "invalid.error.syntax.ataribasic"
+          "match": "\\,",
+          "name": "support.token.delimiter.list.ataribasic"
+        },
+        {
+          "include": "#real_expr"
         }
       ]
     },
