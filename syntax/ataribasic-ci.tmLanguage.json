@@ -2139,19 +2139,34 @@
           ]
         },
         {
-          "begin": "\\(",
-          "end": "(?:(?=:|$)|(?=$))",
-          "beginCaptures": {
-            "0": {
-              "name": "support.paren.open.ataribasic"
-            }
-          },
+          "begin": "(?=\\()",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:(?i:(GOTO)|(GOSUB)))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=$))",
+          "applyEndPatternLast": 1,
           "patterns": [
             {
-              "include": "#expr_till_close"
+              "begin": "\\(",
+              "end": "(\\))|(?=$)",
+              "patterns": [
+                {
+                  "include": "#expr_till_close__noclose"
+                }
+              ],
+              "beginCaptures": {
+                "0": {
+                  "name": "support.paren.open.ataribasic"
+                }
+              },
+              "endCaptures": {
+                "1": {
+                  "name": "support.paren.close.subscript.ataribasic"
+                }
+              },
+              "contentName": "ctx.expr_till_close.ataribasic"
+            },
+            {
+              "include": "#expr_wants_operator"
             }
-          ],
-          "contentName": "ctx.expr_till_close.ataribasic"
+          ]
         },
         {
           "begin": "(?=\\\")",
@@ -2244,7 +2259,7 @@
           "contentName": "ctx.expr_eat_subscript.ataribasic"
         },
         {
-          "begin": "(?=[^\\s:])(?!(?:(?i:CHR\\$))|(?:(?i:STR\\$))|(?:(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)))|(?:\\()|(?:(?=\\\"))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:THEN|GOTO|GOSUB))|(?:(?i:[A-Z][A-Z0-9]*\\$))|(?:(?i:[A-Z][A-Z0-9]*)))",
+          "begin": "(?=[^\\s:])(?!(?:(?i:CHR\\$))|(?:(?i:STR\\$))|(?:(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)))|(?:(?=\\())|(?:(?=\\\"))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:THEN|GOTO|GOSUB))|(?:(?i:[A-Z][A-Z0-9]*\\$))|(?:(?i:[A-Z][A-Z0-9]*)))",
           "end": "(?!\\G)(?<=\\S)|(?=:|$)",
           "patterns": [
             {
@@ -2415,22 +2430,37 @@
           "match": "\\s+"
         },
         {
-          "begin": "(\\()",
-          "end": "(?:(?=:|$)|(?=$))",
-          "beginCaptures": {
-            "1": {
-              "name": "support.paren.open.subscript.ataribasic"
-            }
-          },
+          "begin": "(?=(\\())",
+          "end": "(?!\\G)(?<=\\S)|(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:(?i:(GOTO)|(GOSUB)))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=$))",
+          "applyEndPatternLast": 1,
           "patterns": [
             {
-              "include": "#expr_till_close"
+              "begin": "(\\()",
+              "end": "(\\))|(?=$)",
+              "patterns": [
+                {
+                  "include": "#expr_till_close__noclose"
+                }
+              ],
+              "beginCaptures": {
+                "1": {
+                  "name": "support.paren.open.subscript.ataribasic"
+                }
+              },
+              "endCaptures": {
+                "1": {
+                  "name": "support.paren.close.subscript.ataribasic"
+                }
+              },
+              "contentName": "ctx.expr_till_close.ataribasic"
+            },
+            {
+              "include": "#expr_wants_operator"
             }
-          ],
-          "contentName": "ctx.expr_till_close.ataribasic"
+          ]
         },
         {
-          "begin": "(?=[^\\s:])(?!(?:(\\()))",
+          "begin": "(?=[^\\s:])(?!(?:(?=(\\())))",
           "end": "(?!\\G)(?<=\\S)|(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:(?i:(GOTO)|(GOSUB)))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=$))",
           "patterns": [
             {
@@ -2843,6 +2873,35 @@
         },
         {
           "include": "#expr_wants_operator"
+        }
+      ]
+    },
+    "expr_till_close__noclose": {
+      "contentName": "ctx.expr_till_close.ataribasic",
+      "patterns": [
+        {
+          "match": "(?:[^)]*(;:|$)).*",
+          "name": "invalid.error.syntax.ataribasic"
+        },
+        {
+          "match": "\\s+"
+        },
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "match": "\\,",
+          "name": "support.token.delimiter.subscripts.ataribasic"
+        },
+        {
+          "begin": "(?=[^\\s:])(?!(?:(?:[^)]*(;:|$)).*)|(?:\\,))",
+          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "patterns": [
+            {
+              "include": "#expr_eat_modifier"
+            }
+          ],
+          "contentName": "ctx.expr_eat_modifier.ataribasic"
         }
       ]
     },

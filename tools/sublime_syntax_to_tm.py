@@ -516,6 +516,18 @@ class Converter:
         # a generated name so it can be referenced like any other.
         dests = [self.intern_anon(d) if isinstance(d, list) else d
                  for d in dests]
+
+        # Bracket context: the destination LOOPS until a closer that SETS a
+        # continuation (expr_till_close: `\) -> set: expr_wants_operator`).
+        # Nested inside, that closer can never end the bracket region, so an
+        # extra ')' was accepted and an unclosed '(' ended quietly at ':'.
+        # Push on the opener, pop ON the closer, continue after it:
+        #   A (?=opener) .. [B opener..closer] then continuation rules
+        if len(dests) == 1:
+            closer = self.bracket_closer(dests[0])
+            if closer:
+                return self.bracket_region(match_rx, scope, captures,
+                                           dests[0], closer)
         end_rx, end_scope = self.end_condition(dests[-1])
 
         # An error/fallback span must still yield at ':' so the next statement
@@ -704,6 +716,50 @@ class Converter:
                     (':' in r['match'] or '$' in r['match']):
                 return True
         return False
+
+    def bracket_closer(self, ctx_name):
+        """(rule, continuation) if `ctx_name` is a bracket body: it is not
+        one-shot and has a rule matching a lone ')' or ']' that `set:`s a
+        single named continuation context."""
+        if self.is_oneshot(ctx_name):
+            return None
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict):
+                continue
+            if r.get('match') in ('\\)', '\\]') and isinstance(r.get('set'), str):
+                return r, r['set']
+        return None
+
+    def bracket_region(self, open_rx, open_scope, open_caps, body, closer):
+        r, cont = closer
+        close_rx = fix_regex(expand_vars(r['match'], self.variables))
+        inner_name = body + '__noclose'
+        if inner_name not in self.contexts:
+            self.contexts[inner_name] = [x for x in self.contexts[body]
+                                         if x is not r]
+        b = {'begin': open_rx,
+             # Pop ON the closer. `$` too: an unclosed bracket must not
+             # carry the region into the next line (its own error rule
+             # has already painted the rest of the line).
+             'end': '(%s)|(?=$)' % close_rx,
+             'patterns': [{'include': '#' + inner_name}]}
+        caps = dict(open_caps) if open_caps else {}
+        if open_scope:
+            caps.setdefault('0', {'name': open_scope})
+        if caps:
+            b['beginCaptures'] = caps
+        if r.get('scope'):
+            b['endCaptures'] = {'1': {'name': expand_vars(r['scope'], self.variables)}}
+        for x in self.contexts.get(body) or []:
+            if isinstance(x, dict) and x.get('meta_content_scope'):
+                b['contentName'] = expand_vars(x['meta_content_scope'], self.variables)
+        cont_end, _ = self.end_condition(cont)
+        return {'begin': '(?=%s)' % open_rx,
+                # Try the continuation's rules first (end last), so after
+                # the closer an operator is taken; anything else closes A.
+                'end': '(?!\\G)(?<=\\S)|' + cont_end,
+                'applyEndPatternLast': 1,
+                'patterns': [b, {'include': '#' + cont}]}
 
     def is_oneshot(self, ctx_name, _seen=None):
         """True if every rule reachable in `ctx_name` transitions (set/pop).
