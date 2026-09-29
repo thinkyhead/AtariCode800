@@ -143,9 +143,25 @@ Four grammars, all converted from the Sublime originals by
 | Grammar | Scope | Files |
 |---|---|---|
 | Atari BASIC | `source.ataribasic` | `.lst` `.ulst` |
-| Atari BASIC (CI) | `source.ataribasic.ci` | (variant, error-catching) |
+| Atari BASIC (CI) | `source.ataribasic.ci` | (no extensions — pick via Change Language Mode) |
 | Atari 6502 Assembly | `source.asm` | `.asm .s .inc .mac .a65` |
 | LD65 Config | `source.ld65cfg` | `.lnk .cfg` |
+
+### The CI (case-insensitive) variant
+
+Real Atari BASIC accepts only uppercase keywords, so `source.ataribasic` is
+strict: lowercase `print` gets no keyword scope, which is a useful mistake to
+see. `AtariBASIC_CI.sublime-syntax` — named "AtariBASIC (loose)" upstream — is
+the same grammar with `(?i)` applied to every keyword pattern, for reading
+listings typed in lowercase.
+
+The difference is exactly that, and the smoke suite asserts it: on
+`20 print "HI"` the strict grammar scopes 0 keywords and the CI grammar
+scopes 1.
+
+It has a language id (`ataribasic-ci`) but deliberately claims **no file
+extensions** — `.LST`/`.ULST` belong to the strict grammar, and claiming them
+here would fight the default. Select it per-file with Change Language Mode.
 
 A VSCode "AtariBASIC Syntax" extension already exists, but it was just a
 straight conversion of the Sublime plugin. AtariCode800 does its own port

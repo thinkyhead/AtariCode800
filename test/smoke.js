@@ -395,6 +395,71 @@ sys.stdout.write(json.dumps(${JSON.stringify(sample)}.translate(m)))
 }
 
 
+let done6 = Promise.resolve();
+
+// --- 6. the CI (case-insensitive) grammar -----------------------------
+// The CI variant is the same grammar with (?i) on every keyword pattern, for
+// listings typed in lowercase. It is easy to leave behind when the main
+// grammar is regenerated -- it already went stale once -- so assert both that
+// it is registered properly and that it still differs in the one way that
+// justifies its existence.
+{
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const ci = pkg.contributes.grammars
+    .find((g) => g.scopeName === 'source.ataribasic.ci');
+
+  check('CI grammar is registered', !!ci);
+  check('CI grammar has a language id (else it is unselectable)',
+    !!(ci && ci.language), ci ? String(ci.language) : '');
+  const ciLang = pkg.contributes.languages.find((l) => l.id === 'ataribasic-ci');
+  check('CI language is declared', !!ciLang);
+  // Claiming .LST/.ULST here would fight the strict grammar for the default.
+  check('CI language claims no file extensions',
+    !!ciLang && !ciLang.extensions);
+
+  done6 = (async () => {
+    const vsctm = require('vscode-textmate');
+    const oni = require('vscode-oniguruma');
+    const wasm = fs.readFileSync(
+      require.resolve('vscode-oniguruma/release/onig.wasm'));
+    await oni.loadWASM(wasm.buffer);
+
+    const paths = {
+      'source.ataribasic': path.join(ROOT, 'syntax', 'ataribasic.tmLanguage.json'),
+      'source.ataribasic.ci': path.join(ROOT, 'syntax', 'ataribasic-ci.tmLanguage.json'),
+    };
+    const reg = new vsctm.Registry({
+      onigLib: Promise.resolve({
+        createOnigScanner: (s) => new oni.OnigScanner(s),
+        createOnigString: (s) => new oni.OnigString(s),
+      }),
+      loadGrammar: async (scope) => (paths[scope]
+        ? vsctm.parseRawGrammar(fs.readFileSync(paths[scope], 'utf8'), paths[scope])
+        : null),
+    });
+
+    const isKeyword = (t) => t.scopes.some((s) => /keyword|storage|support/.test(s));
+    const count = async (scope, line) => {
+      const g = await reg.loadGrammar(scope);
+      return g.tokenizeLine(line, vsctm.INITIAL).tokens.filter(isKeyword).length;
+    };
+
+    check('both grammars scope UPPERCASE keywords',
+      (await count('source.ataribasic', '20 PRINT "HI"')) > 0
+      && (await count('source.ataribasic.ci', '20 PRINT "HI"')) > 0);
+
+    const strictLower = await count('source.ataribasic', '20 print "HI"');
+    const ciLower = await count('source.ataribasic.ci', '20 print "HI"');
+    check('strict grammar rejects lowercase keywords', strictLower === 0,
+      `${strictLower} keyword-scoped`);
+    check('CI grammar accepts lowercase keywords', ciLower > 0,
+      `${ciLower} keyword-scoped`);
+  })();
+
+  done6.catch((e) => { check('CI grammar tokenizes', false, e.message); });
+}
+
+
 // --- 4. the "Got BASIC?" downloader -----------------------------------
 // Network-dependent, so it SKIPs rather than fails when offline. Guards the
 // two things that actually broke in development: the repo's default branch is
@@ -427,8 +492,9 @@ sys.stdout.write(json.dumps(${JSON.stringify(sample)}.translate(m)))
       items.every((i) => /\.(ULST|LST)$/i.test(i.label)));
   })();
 
-  // The suite is otherwise synchronous; settle this before reporting.
-  done.then(() => {
+  // The suite is otherwise synchronous; settle the async checks before
+  // reporting, or the exit code is decided before they run.
+  Promise.all([done, done6]).then(() => {
     console.log(failures === 0
       ? '\nAll smoke checks passed.'
       : `\n${failures} check(s) FAILED.`);

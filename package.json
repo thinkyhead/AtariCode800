@@ -323,6 +323,14 @@
           ".cfg"
         ],
         "configuration": "./asm-language-configuration.json"
+      },
+      {
+        "id": "ataribasic-ci",
+        "aliases": [
+          "Atari BASIC (CI)",
+          "AtariBASIC CI"
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
@@ -342,6 +350,7 @@
         "path": "./syntax/ld65config.tmLanguage.json"
       },
       {
+        "language": "ataribasic-ci",
         "scopeName": "source.ataribasic.ci",
         "path": "./syntax/ataribasic-ci.tmLanguage.json"
       }
