@@ -201,6 +201,7 @@ class Converter:
         self._end_cache = {}
         self._literal_cache = {}
         self._anon = {}
+        self._seq = {}
         self.ws_stripped = 0
         self.empty_begins = 0
 
@@ -468,8 +469,27 @@ class Converter:
         if end_scope:
             region['endCaptures'] = {'0': {'name': end_scope}}
 
-        region['patterns'] = [{'include': '#' + d} for d in dests
-                              if d in self.contexts]
+        # Sublime pushes a LIST of contexts as a stack: the LAST entry is
+        # entered first and sits innermost, and the ones before it apply only
+        # AFTER it pops (`set: [expr_wants_operator, required_args]` means
+        # "parse the argument list, THEN expect an operator"). That is a
+        # SEQUENCE, not a set of alternatives.
+        #
+        # Emitting them as sibling includes gets it wrong in both directions:
+        # in source order the outer context matched '(' first, and in either
+        # order the inner context's own catch-all stays live as a sibling
+        # forever, so after `PEEK(A)` closed its parens required_args caught the
+        # following '+' and flagged `+256*PEEK(A+N1)` invalid.
+        #
+        # Build the sequence properly instead: the innermost context, with the
+        # outer ones nested INSIDE its regions so they become reachable only
+        # once it has finished.
+        dests = [d for d in dests if d in self.contexts]
+        if len(dests) > 1:
+            inner, outer = dests[-1], list(reversed(dests[:-1]))
+            region['patterns'] = [{'include': '#' + self.intern_sequence(inner, outer)}]
+        else:
+            region['patterns'] = [{'include': '#' + d} for d in dests]
         if not region['patterns']:
             del region['patterns']
 
@@ -479,7 +499,187 @@ class Converter:
         inner_scope = self.content_scope_of(dests[-1])
         if inner_scope:
             region['contentName'] = inner_scope
+
+        # Same for `meta_scope`, which covers the delimiters too (Sublime
+        # applies it to the whole span including the text that pushed and
+        # popped). TextMate ignores `name` on an included repository entry just
+        # as it ignores contentName, so without lifting it here a string body
+        # got no string.quoted scope at all -- quoted text was invisible to
+        # every theme. Only set it when the rule did not already name the
+        # matched text, so an explicit scope on the pushing rule still wins.
+        meta_scope = self.meta_scope_of(dests[-1])
+        if meta_scope and 'name' not in region:
+            region['name'] = meta_scope
+            # ...but only while that context actually lasts. The destination
+            # leaves on its own closing delimiter, and because that delimiter is
+            # matched by a rule INSIDE the destination, the outer region's `end`
+            # never sees it -- the scope ran to end of line, so
+            # `?#1;"(";M;") ";:RET.` left the whole tail marked string.quoted.
+            # Bound the region to that exit.
+            #
+            # The exit may be a `pop: true` or a `set:` to another context
+            # (expr_eat_string hands off to expr_wants_operator after the
+            # closing quote); both end this scope.
+            exit_rx = self.exit_pattern(dests[-1])
+            if exit_rx and region.get('end') == '(?=$)':
+                # Consume the delimiter here rather than looking ahead at it:
+                # the destination's body rule would otherwise match it first
+                # (a lookahead is zero-width, so the body keeps its turn) and
+                # every quote came out scoped as an opener with the region never
+                # closing. Whatever scope the destination put on its exit rule
+                # belongs on the delimiter we now consume.
+                region['end'] = '(?:%s|(?=$))' % exit_rx
+                sc = self.exit_scope(dests[-1])
+                if sc:
+                    region['endCaptures'] = {'0': {'name': sc}}
+                # Consuming the delimiter here also consumed the destination's
+                # hand-off: `expr_eat_string` closes the quote with
+                # `set: expr_wants_operator`, and that continuation never ran,
+                # so `?"A";M;"B"` flagged everything after the string invalid.
+                # Re-enter it as a sibling after the region so the rest of the
+                # statement is parsed as an expression again.
+                cont = self.exit_target(dests[-1])
+                if cont and cont in self.contexts:
+                    # The destination's own exit rule is now redundant -- we
+                    # consume that delimiter -- and actively harmful: as a
+                    # `set:` it converts to a begin/end region that reopened on
+                    # the closing quote and swallowed the rest of the line, so
+                    # `?"A";M;"B"` still errored. Use a body-only copy inside.
+                    body = self.intern_body_only(dests[-1])
+                    inner = dict(region)
+                    inner['patterns'] = [{'include': '#' + body}]
+
+                    # The continuation replaced the statement context via
+                    # `set:`, so in Sublime that statement is still on the stack
+                    # underneath and keeps handling its own punctuation -- the
+                    # ';' between PRINT items is cmd_print's, not the
+                    # expression's. Nesting hides that, and the continuation's
+                    # syntax_error fallback then claimed `;M;"B"`. Emit the
+                    # continuation WITHOUT its fallback so unhandled punctuation
+                    # falls through to the enclosing statement, as it does in
+                    # Sublime.
+                    region = {'patterns': [
+                        inner,
+                        {'include': '#' + self.intern_no_fallback(cont)}]}
         return region
+
+    def intern_no_fallback(self, ctx_name):
+        """`ctx_name` minus its catch-all error span.
+
+        Used where Sublime would have fallen through to a context still on the
+        stack below. Keeping the fallback here would claim text that the
+        enclosing statement owns.
+        """
+        name = '%s__nofallback' % ctx_name
+        if name in self.contexts:
+            return name
+        kept = [r for r in (self.contexts.get(ctx_name) or [])
+                if not (isinstance(r, dict) and r.get('match') == ''
+                        and targets_of(r) == ['syntax_error'])]
+        self.contexts[name] = kept
+        return name
+
+    def intern_body_only(self, ctx_name):
+        """`ctx_name` without the exit rule, for use inside a bounded region."""
+        name = '%s__body' % ctx_name
+        if name in self.contexts:
+            return name
+        kept = [r for r in (self.contexts.get(ctx_name) or [])
+                if not (isinstance(r, dict) and r.get('set')
+                        and r.get('match') not in (None, '', '$', '.'))]
+        self.contexts[name] = kept
+        return name
+
+    def exit_target(self, ctx_name):
+        """Context the destination hands off to when it closes."""
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict) or not r.get('set'):
+                continue
+            m = r.get('match')
+            if not m or m in ('', '$', '.'):
+                continue
+            t = targets_of(r)
+            return t[-1] if t and isinstance(t[-1], str) else None
+        return None
+
+    def exit_scope(self, ctx_name):
+        """Scope the destination applies to its own closing delimiter."""
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict) or not (r.get('pop') or r.get('set')):
+                continue
+            m = r.get('match')
+            if not m or m in ('', '$', '.'):
+                continue
+            s = r.get('scope')
+            return expand_vars(s, self.variables) if s else None
+        return None
+
+    def exit_pattern(self, ctx_name):
+        """Regex for the delimiter on which `ctx_name` stops applying.
+
+        Only a rule that matches the delimiter ALONE qualifies. One that also
+        consumes the body on its way out (`[^"]*(")`) would match at the very
+        start of the region and close it before anything was scoped, so such a
+        context is left unbounded rather than mis-bounded.
+        """
+        for r in self.contexts.get(ctx_name) or []:
+            if not isinstance(r, dict):
+                continue
+            if not (r.get('pop') or r.get('set')):
+                continue
+            m = r.get('match')
+            if not m or m in ('', '$', '.'):
+                continue
+            if re.search(r'\[\^[^\]]*\]\s*[*+]', m):
+                return None
+            return fix_regex(expand_vars(m, self.variables))
+        return None
+
+
+
+    def intern_sequence(self, inner, outer):
+        """A context that runs `inner`, then the `outer` chain after it pops.
+
+        Sublime's stacked push is sequential, but TextMate only nests. So the
+        continuation is spliced INSIDE each of inner's regions: once one of
+        them closes, the outer contexts become reachable, and never before.
+        A context with no regions to nest into can only be an alternative, so
+        fall back to plain sibling includes there.
+        """
+        key = (inner,) + tuple(outer)
+        if key in self._seq:
+            return self._seq[key]
+
+        name = '%s__then__%s' % (inner, '_'.join(outer))
+        self._seq[key] = name
+
+        src = self.contexts.get(inner) or []
+        cont = [{'include': o} for o in outer]
+
+        # The continuation goes AFTER the inner context's own rules, as
+        # siblings. TextMate tries patterns in order at each position, so while
+        # the inner context still matches (the '(' of an argument list) it
+        # wins; once it no longer can -- the parens have closed and we are
+        # looking at '+' -- the continuation is what applies. That reproduces
+        # "inner first, then outer" without nesting, which mattered because
+        # nesting the continuation inside inner's regions stole their `end` and
+        # left the closing paren unconsumed.
+        #
+        # The inner context's catch-all fallback must not sit between them: it
+        # would claim everything before the continuation ever got a turn, which
+        # is what flagged `+256*PEEK(A+N1)` invalid. Drop it here; the
+        # continuation's own fallback still reports genuine errors.
+        keep = [r for r in src
+                if not (isinstance(r, dict) and r.get('match') == ''
+                        and targets_of(r) == ['syntax_error'])]
+        self.contexts[name] = keep + cont
+        return name
+
+    def meta_scope_of(self, ctx_name):
+        for r in self.contexts.get(ctx_name) or []:
+            if isinstance(r, dict) and r.get('meta_scope'):
+                return expand_vars(r['meta_scope'], self.variables)
+        return None
 
     def content_scope_of(self, ctx_name):
         for r in self.contexts.get(ctx_name) or []:
@@ -501,6 +701,27 @@ class Converter:
             c = self.conv_rule(r)
             if c:
                 pats.append(c)
+
+        # In Sublime a `match: '' / set: syntax_error` fallback is reached only
+        # when every rule ABOVE it failed at this position, and the context is
+        # then gone -- `required_args` matches '(' and is replaced. A TextMate
+        # include has neither property: the fallback stays live as a sibling
+        # forever, so after `PEEK(A)` closed its parens the SAME required_args
+        # include caught the following '+' and flagged `+256*PEEK(A+N1)`
+        # invalid. Guard it with a negative lookahead for the patterns that
+        # precede it, which restores "only if nothing else here applies".
+        for i, p in enumerate(pats):
+            if p.get('begin') != '(?=[^\\s:])':
+                continue
+            earlier = [q.get('begin') or q.get('match') for q in pats[:i]]
+            earlier = [e for e in earlier if e and e != '\\s+']
+            if earlier:
+                guard = '|'.join('(?:%s)' % e for e in dict.fromkeys(earlier))
+                # Keep the positive lookahead: a bare negative lookahead also
+                # succeeds at end of line, where it reopened a zero-width
+                # region that TextMate then carried into the NEXT line --
+                # every line after the first fell into syntax_error.
+                p['begin'] = '(?=[^\\s:])(?!%s)' % guard
         entry['patterns'] = pats
         return entry
 
