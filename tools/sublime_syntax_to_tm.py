@@ -402,7 +402,7 @@ class Converter:
             # separator unscoped. `(?=\S)` lets the whitespace skip run first.
             if empty_pop:
                 starts = []
-                for n in seen:           # every context the set-chain crosses
+                for n in sorted(seen):   # every context the set-chain crosses
                     starts += self.start_patterns(n)
                 if starts:
                     parts.append('(?=\\S)(?!' + '|'.join(

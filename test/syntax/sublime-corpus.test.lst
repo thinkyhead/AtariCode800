@@ -13,7 +13,7 @@ R.
 
 100 COM F$(10),N$(12),C(1,A),E(9)
 R.<- constant.numeric.line-number.ataribasic
-R.  ^ keyword.dim.ataribasic
+R.  ^ keyword.com.ataribasic
 R.
 R.
 
