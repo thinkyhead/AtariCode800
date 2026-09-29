@@ -546,11 +546,37 @@ class Converter:
         # own start, i.e. right after the child it chose has ended, so the
         # chain collapses back to the nearest LOOP context. `(?<=\S)` keeps a
         # whitespace skip from counting as "moved past".
-        if self.is_oneshot(dests[-1] if not isinstance(dests[-1], list)
-                           else self.intern_anon(dests[-1])):
+        # For a stacked `set: [A, B]` the region must survive B (innermost,
+        # e.g. required_args) and let A (expr_wants_operator) take its turn,
+        # so closing "once past start" would drop A. Only close early when
+        # there is a single destination.
+        real = [d for d in dests if isinstance(d, list) or d in self.contexts]
+        if len(real) == 1 and self.is_oneshot(
+                real[0] if not isinstance(real[0], list)
+                else self.intern_anon(real[0])):
             end_rx = '(?!\\G)(?<=\\S)|' + end_rx
+        elif len(real) > 1 and all(isinstance(d, str) and self.is_oneshot(d)
+                                   for d in real[:-1]):
+            # Stacked set of one-shots (`[expr_wants_operator, required_args]`):
+            # close once past start UNLESS an outer context's token is next
+            # (the operator after `PEEK(1)`), so `;` after it is not swallowed.
+            outer = []
+            for d in real[:-1]:
+                # Tokens the outer context CONSUMES and stays for. Its pop
+                # rules (`GOTO|GOSUB -> pop`) belong to the enclosing
+                # statement, so they must close us, not keep us open.
+                outer += [p for p in self.start_patterns(d, pops=False)]
+            if outer:
+                end_rx = '(?!\\G)(?<=\\S)(?!%s)|%s' % (
+                    '|'.join('(?:%s)' % p for p in outer), end_rx)
 
         region = {'begin': match_rx, 'end': end_rx}
+        # `(?<=\S)` stops a leading whitespace skip counting as "moved past
+        # start". A region that begins zero-width on a non-blank has no
+        # leading whitespace, and there the guard kept it open after a
+        # trailing blank (`POKE 1 ,2` flagged the comma). Drop it.
+        if match_rx.startswith('(?=[^\\s'):
+            region['end'] = end_rx.replace('(?!\\G)(?<=\\S)', '(?!\\G)', 1)
         # Sublime tries a context's rules IN ORDER, and its pop is just one
         # of them; TextMate tries a region's `end` FIRST. With the end being
         # `(?=:|$)`, a body rule for the delimiter (`one_expr`'s "statement
@@ -684,7 +710,17 @@ class Converter:
                         'patterns': [inner, {'include': '#' + cont_nf}]}
         return region
 
-    def start_patterns(self, ctx_name, _seen=None):
+    def is_included(self, ctx_name):
+        """True if some other context `include:`s this one. A \\G-anchored
+        wrapper only makes sense where the context is entered as a region;
+        spliced in as a mixin, \\G would claim tokens its host owns (GOTO)."""
+        for rules in self.contexts.values():
+            for r in rules or []:
+                if isinstance(r, dict) and r.get('include') == ctx_name:
+                    return True
+        return False
+
+    def start_patterns(self, ctx_name, _seen=None, pops=True):
         """Every non-empty, non-pop match reachable in `ctx_name` (via include)."""
         seen = set() if _seen is None else _seen
         if ctx_name in seen:
@@ -696,7 +732,9 @@ class Converter:
                 continue
             inc = r.get('include')
             if isinstance(inc, str):
-                out += self.start_patterns(inc, seen)
+                out += self.start_patterns(inc, seen, pops)
+                continue
+            if not pops and r.get('pop'):
                 continue
             m = r.get('match')
             if isinstance(m, str) and m not in ('', '$', '\\s+'):
@@ -1003,7 +1041,7 @@ class Converter:
         empty_set = any(isinstance(r, dict) and r.get('match') == ''
                         and r.get('set') is not None for r in rules)
         if 'err' in kinds and 'set' in kinds and not empty_set \
-                and not self.is_oneshot(name):
+                and not self.is_oneshot(name) and not self.is_included(name):
             sets = [p for p, k in zip(pats, kinds) if k == 'set']
             rest = [p for p, k in zip(pats, kinds) if k != 'set']
             rest.sort(key=lambda p: not p.get('_delim_err'))   # errors first

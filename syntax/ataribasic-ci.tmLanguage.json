@@ -829,7 +829,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?::\\s*$)|(?:(?i:(RE[M.]|R?\\.)))|(?:(?i:(D(AT[A.]|A?\\.))\\s*))|(?:(?i:RES(TOR[E.]|(TO?)?\\.)))|(?:(CLR)|(CON[T.])|(DEG)|(POP)|(RAD)|(CLOAD)|(CS(AV[E.]|A?\\.)))|(?:(B(YE|Y?\\.))|(DOS)|(END)|(NEW)|(STO[P.])|(RET(UR[N.]|U?\\.)))|(?:RU[N.])|(?:(?i:(\\?|PR(IN[T.]|N?.))\\s*(#)))|(?:(?i:\\?|PR(INT|(IN?)?\\.)))|(?:(?i:(LP(RINT|(R(IN?)?)?\\.))))|(?:(?i:(I(NPU[T.]|(NP?)?\\.))\\s*(#)))|(?:(?i:I(NPU[T.]|(NP?)?\\.)))|(?:(?i:(CL(OS[E.]|O?\\.))\\s*(#)))|(?:(?i:(O(PE[.N]|P?\\.))\\s*(#)))|(?:(?i:((GET)|(PUT)|(ST(ATU[S.]|(AT?)?\\.)))\\s*(#)))|(?:(?i:X(IO|I?\\.)))|(?:(?i:((NO(T[E.]|\\.))|(P(OIN[T.]|(OI?)?\\.)))\\s*(#)))|(?:(?i:COM))|(?:(?i:DIM))|(?:(?i:F(OR|O?\\.)))|(?:(?i:N(EX[T.]|E?\\.)))|(?:(?i:T(RA[P.]|R?\\.)))|(?:(?i:POK[E.]))|(?:(?i:C(OLO[R.]|(OL?)?\\.)))|(?:(?i:DR(AWT[O.]|(AW?)?\\.)))|(?:(?i:GR(APHIC[S.]|(A(P(HI?)?)?)?\\.)))|(?:(?i:LOC(AT[E.]|A?\\.)))|(?:(?i:POS(ITIO[N.]|(I(TI?)?)?\\.)))|(?:(?i:PL(OT|O?\\.)))|(?:(?i:SE(TCOLO[R.]|(T(C(OL?)?)?)?\\.)))|(?:(?i:SO(UN[D.]|U?\\.)))|(?:(?i:REA[D.]))|(?:(?i:L(IS[T.]|I?\\.)))|(?:(LO(AD|A?\\.))|(S(AV[E.]|A?\\.))|(E(NT?)?\\.|ENTE[R.]))|(?:(?i:G(OT[O.]|O?\\.)))|(?:(?i:GO TO))|(?:(?i:GOS(UB|U?\\.)))|(?:(?i:ON))|(?:(?i:IF))|(?:(?i:(LE[T.])?\\s*([A-Z][A-Z0-9]*\\$)))|(?:(?i:(LE[T.])?\\s*([A-Z][A-Z0-9]*))))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -867,7 +867,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:\\,))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -898,7 +898,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(\\#)))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1033,7 +1033,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1075,7 +1075,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:\\())",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#cmd_let_equals"
@@ -1107,7 +1107,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:=))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1475,7 +1475,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:\\())",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1840,7 +1840,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1871,7 +1871,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?::))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -1938,7 +1938,7 @@
         },
         {
           "begin": "(?=[^\\s:])",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_eat_modifier"
@@ -1996,7 +1996,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:(NOT)|(-)|(\\+))))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_wants_value"
@@ -2043,7 +2043,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:NOT|[-+])))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_wants_value"
@@ -2061,7 +2061,7 @@
         },
         {
           "begin": "(?i:CHR\\$)",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "meta.function-call.chrS.ataribasic"
@@ -2075,7 +2075,7 @@
         },
         {
           "begin": "(?i:STR\\$)",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=:|$)",
           "beginCaptures": {
             "0": {
               "name": "meta.function-call.str.ataribasic"
@@ -2089,7 +2089,7 @@
         },
         {
           "begin": "(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)(?<=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=:|$)",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.fre.ataribasic"
@@ -2286,7 +2286,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(?i:CHR\\$))|(?:(?i:STR\\$))|(?:(?i:(FRE)|(USR)|(ABS)|(ADR)|(ASC)|(ATN)|(CLOG)|(COS)|(EXP)|(INT)|(LEN)|(LOG)|(PEEK)|(RND)|(SGN)|(SIN)|(SQR)|(VAL)|(PADDLE)|(PTRIG)|(STICK)|(STRIG)))|(?:(?=\\())|(?:(?=\\\"))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|(?:(?i:THEN|GOTO|GOSUB))|(?:(?i:[A-Z][A-Z0-9]*\\$))|(?:(?i:[A-Z][A-Z0-9]*)))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2487,7 +2487,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(?=(\\())))",
-          "end": "(?!\\G)(?<=\\S)|(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:(?i:(GOTO)|(GOSUB)))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=$))",
+          "end": "(?!\\G)|(?:(?:(?i:(GOTO)|(GOSUB)))|(?=:)|(?=\\S)(?!(?:(?i:((<>|[<>]=|[-+*/^<=>]|AND|OR)\\s*(:|$))))|(?:[-+*/^])|(?:(?i:<>|[<>]=?|=|AND|OR))|(?:(?i:(THEN)\\s*([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))))|(?:(?i:THEN))|(?:(?i:(GOTO)|(GOSUB)))|(?:((?i:[A-Z][A-Z0-9]*)|([-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?))|\\()))|(?=$))",
           "patterns": [
             {
               "include": "#expr_wants_operator"
@@ -2523,7 +2523,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[^\":]+)|(?:\"))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2553,7 +2553,7 @@
             },
             {
               "begin": "(?=[^\\s:])(?!(?:(?:[^)]*(;:|$)).*)|(?:\\))|(?:\\,))",
-              "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+              "end": "(?!\\G)|(?=:|$)",
               "patterns": [
                 {
                   "include": "#expr_eat_modifier"
@@ -2625,7 +2625,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(?:(?i:[A-Z][A-Z0-9]*\\$)).*)|(?:(?i:[A-Z][A-Z0-9]*))|(?:[-+]?(\\d+\\.\\d*(E\\d+)?|\\.?\\d+(E\\d+)?)))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2660,7 +2660,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(?i:[A-Z][A-Z0-9]*\\$)))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
@@ -2703,54 +2703,44 @@
     "mixin_some_exprs": {
       "patterns": [
         {
-          "begin": "\\G",
-          "end": "(?=(?:\\)))|(?=$)",
-          "patterns": [
-            {
-              "match": "(?:[:$]).*",
-              "name": "invalid.error.syntax.ataribasic"
-            },
-            {
-              "include": "#mixin_statement_end"
-            },
-            {
-              "include": "#mixin_string"
-            },
-            {
-              "match": "(?i:(<>|[<>]=?|=|AND|NOT|OR))",
-              "name": "keyword.operator.logic.ataribasic"
-            },
-            {
-              "include": "#mixin_values"
-            },
-            {
-              "begin": "\\(",
-              "end": "(?:(?:\\))|(?=$))",
-              "beginCaptures": {
-                "0": {
-                  "name": "support.paren.open.expr.ataribasic"
-                }
-              },
-              "endCaptures": {
-                "0": {
-                  "name": "support.paren.close.ataribasic"
-                }
-              },
-              "patterns": [
-                {
-                  "include": "#expr_paren_open"
-                }
-              ],
-              "contentName": "ctx.expr_paren_open.ataribasic"
-            },
-            {
-              "match": "([-+*/^])",
-              "name": "keyword.operator.math.ataribasic"
-            }
-          ]
+          "match": "(?:[:$]).*",
+          "name": "invalid.error.syntax.ataribasic"
         },
         {
           "match": "\\s+"
+        },
+        {
+          "include": "#mixin_statement_end"
+        },
+        {
+          "include": "#mixin_string"
+        },
+        {
+          "match": "(?i:(<>|[<>]=?|=|AND|NOT|OR))",
+          "name": "keyword.operator.logic.ataribasic"
+        },
+        {
+          "include": "#mixin_values"
+        },
+        {
+          "begin": "\\(",
+          "end": "(?:(?:\\))|(?=$))",
+          "beginCaptures": {
+            "0": {
+              "name": "support.paren.open.expr.ataribasic"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "support.paren.close.ataribasic"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#expr_paren_open"
+            }
+          ],
+          "contentName": "ctx.expr_paren_open.ataribasic"
         },
         {
           "begin": "\\)",
@@ -2761,6 +2751,10 @@
             }
           ],
           "name": "invalid.error.syntax.ataribasic"
+        },
+        {
+          "match": "([-+*/^])",
+          "name": "keyword.operator.math.ataribasic"
         }
       ]
     },
@@ -2951,7 +2945,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:(?:[^)]*(;:|$)).*)|(?:\\,))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#expr_eat_modifier"
@@ -2972,7 +2966,7 @@
         },
         {
           "begin": "(?=[^\\s:])(?!(?:[^\":]+))",
-          "end": "(?!\\G)(?<=\\S)|(?=:|$)",
+          "end": "(?!\\G)|(?=:|$)",
           "patterns": [
             {
               "include": "#syntax_error"
