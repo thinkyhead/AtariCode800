@@ -297,24 +297,15 @@ Assembly gets `tabSize: 8` to match the Sublime 6502 settings.
 names resolve as fixed-pitch on this machine (checked via `NSFont`);
 `Atari Classic` and `AtariClassic-Regular` are the same face.
 
-### The `atari.basic` scope — tried, didn't work
+### The `atari.basic` scope
 
-The stale **MarcinJozwikowski.atari-basic** extension (itself a conversion of
-the same Sublime grammar) registers language id `atari.basic` for `.bas`. We
-tried shipping a `"[atari.basic]"` block in this extension's
-`configurationDefaults` to give those files the Atari look. **It did not work
-in practice and has been removed.**
+The stale **MarcinJozwikowski.atari-basic** extension (also a conversion of
+Scott's Sublime grammar) registers language id `atari.basic` for `.bas`. We
+tried shipping `configurationDefaults` > `"[atari.basic]"` block in this
+extension to apply the Atari look to those files.
 
-Why it looked fine in testing but wasn't: it was verified in an Extension
-Development Host with a *clean* user profile. Extension
-`configurationDefaults` sit at the very bottom of VSCode's settings
-precedence — below user settings, which is exactly the point of "defaults" —
-so a real profile with `editor.fontFamily` set at the user level silently
-wins. The clean-profile test could never have surfaced that.
-
-The lesson worth keeping: **don't try to configure scopes you don't own.**
-If you want the look on `atari.basic` files, put it in your own
-`settings.json`, where it outranks every extension default:
+Result: **NO DICE** Users must configure appearance on `atari.basic` files.
+Lesson: **don't try to configure scopes you don't own.**
 
 ```jsonc
 "[atari.basic]": {
@@ -326,7 +317,7 @@ If you want the look on `atari.basic` files, put it in your own
 AtariCode800 only ships defaults for the language ids it declares
 (`ataribasic`, `asm6502`).
 
-**Heads-up on `.bas` collisions.** Several installed extensions claim `.bas`:
+Although several installed extensions claim `.bas`…
 
 | Extension | Language id | Extensions |
 |---|---|---|
@@ -334,10 +325,9 @@ AtariCode800 only ships defaults for the language ids it declares
 | billycharlton.atari-fastbasic | `basic` | `.bas` `.fb` |
 | chunkypixel.atari-dev-studio | `7800basic`, `batariBasic` | `.bas` `.78b` `.bb` |
 
-Which one wins on a given file is not deterministic, so if a `.bas` opens in
-the wrong mode, set it explicitly (`Change Language Mode`) or pin it per
-workspace with `files.associations`. AtariCode800 itself never claims `.bas` —
-in this project `.bas`/`.BAS` is the *tokenized binary*, not source.
+This is not a problem currently since we use `.ulst` (or semi-obsolete `.lst`).
+If the other extensions don't provide Custom Editor then AtariCode800 could own
+the `.bas` extension for this one purpose, and do the same with `.lst`.
 
 ### Custom editor (possible, not yet built)
 
