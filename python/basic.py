@@ -1319,27 +1319,34 @@ def consolidate_tokenized_program():
     # Calculate offsets
     vnt_offset = 14  # Header ends at byte 13
 
-    # Build VNT
+    # Build VNT. Each name ends with its LAST character's high bit set (the
+    # ROM's _TVAR / SAVE format) -- not a separate $80 byte -- and the table
+    # is terminated by a $00 byte, which VNTD points at.
     vnt_data = bytearray()
     for name in prog.vnt:
-        # MSB-terminated name (MSB = 0x80)
-        vnt_data.extend(name.encode('ascii'))
-        vnt_data.append(0x80)
+        raw = bytearray(name.encode('ascii'))
+        raw[-1] |= 0x80
+        vnt_data.extend(raw)
+    vntd_offset = vnt_offset + len(vnt_data)      # the $00 terminator
+    vnt_data.append(0x00)
 
     vvt_offset = vnt_offset + len(vnt_data)
 
-    # Build VVT (8 bytes per variable)
+    # Build VVT: 8 bytes per variable, as the ROM lays it out (_TVAR):
+    #   [type, varnum, 6 value bytes]
+    # type: $00 numeric, $40 array, $80 string (+1 once DIMmed, which only
+    # happens at run time). The old writer omitted varnum, put the value one
+    # byte early, and typed arrays as numeric.
     vvt_data = bytearray()
-    for entry in prog.vvt:
-        if entry is None:
-            # Empty/uninitialized variable
-            vvt_data.extend(bytes(8))
-        else:
-            # entry = [type, data]
-            vvt_data.append(entry[0])  # type byte
-            if len(entry) > 1 and entry[1]:
-                vvt_data.extend(entry[1])  # data (6 bytes for numeric, string length + chars)
-            vvt_data.extend(bytes(8 - len(vvt_data) % 8))  # pad to 8 bytes
+    for varnum, entry in enumerate(prog.vvt):
+        name = prog.vnt[varnum] if varnum < len(prog.vnt) else ''
+        vtype = entry[0] if entry else 0
+        if name.endswith('(') and vtype == 0:
+            vtype = 0x40
+        value = bytes(entry[1])[:6] if entry and len(entry) > 1 and entry[1] else b''
+        vvt_data.append(vtype)
+        vvt_data.append(varnum & 0xFF)
+        vvt_data.extend(value.ljust(6, b'\x00'))
 
     st_offset = vvt_offset + len(vvt_data)
 
@@ -1367,25 +1374,46 @@ def consolidate_tokenized_program():
 
     if DEBUG_CODE: print(f"DEBUG: Wrote {len(list(prog.statement_table.list_program()))} statements to ST")
 
+    # The program MUST end with line 32768, the immediate-mode line. LIST,
+    # RUN and GOTO walk the statement table until they reach a line number
+    # >= 32768; without it they run off the end into whatever follows, which
+    # is exactly the "won't RUN, LIST freezes" symptom. A real SAVE writes
+    # the immediate line that was being executed (the SAVE command itself);
+    # emit a minimal one -- END -- unless the table already has it.
+    #   [00 80] line_len=6  disp=6  cEND($15)  cCR($16)
+    stmcur_offset = st_offset + len(st_data)
+    # Walk the line-size chain to find whether the last line is 32768.
+    pos, last = 0, None
+    while pos + 2 < len(st_data):
+        ln = st_data[pos] | (st_data[pos + 1] << 8)
+        size = st_data[pos + 2]
+        if size == 0:
+            break
+        last = (pos, ln)
+        pos += size
+    if last and last[1] >= 32768:
+        stmcur_offset = st_offset + last[0]
+    else:
+        st_data.extend(bytes([0x00, 0x80, 0x06, 0x06, 0x15, 0x16]))
+
     # Assemble final buffer
     result = bytearray()
 
-    # Header — canonical Atari BASIC .BAS format (matches what atari800 writes)
-    # Bytes 0-1  : link to end-of-program (0)
-    # Bytes 2-3  : LOMEM bias word (0x0100 = memory base 0x0600 − 0x0500)
-    # Bytes 4-5  : VNT offset (biased by +0x100)
-    # Bytes 6-7  : VVT offset (biased by +0x100)
-    # Bytes 8-9  : ST  offset (biased by +0x100)
-    # Bytes 10-11: reserved
-    # Bytes 12-13: end-of-data offset (biased by +0x100)
+    # Header: the seven ROM pointers SAVE writes, as offsets from VNTP
+    # biased by +0x100 (VNTP itself is always 0x0100):
+    #   0-1 LOMEM (0)   2-3 VNTP   4-5 VNTD (VNT's $00 terminator)
+    #   6-7 VVTP        8-9 STMTAB 10-11 STMCUR (the line-32768 line)
+    #   12-13 STARP (end of the statement table)
+    # VNTD and STMCUR were written as VNTP and 0, which atari800 rejected.
     # load_file_BAS recovers the real offset via: HEADER_SIZE + stored − 0x100
-    header[0:2]   = bytes([0x00, 0x00])                                            # link
-    header[2:4]   = bytes([0x00, 0x01])                                            # LOMEM bias (0x0100)
-    header[4:6]   = ((vnt_offset - 14 + 0x100) & 0xFFFF).to_bytes(2, 'little')     # VNT
-    header[6:8]   = ((vvt_offset - 14 + 0x100) & 0xFFFF).to_bytes(2, 'little')     # VVT
-    header[8:10]  = ((st_offset  - 14 + 0x100) & 0xFFFF).to_bytes(2, 'little')     # ST
-    header[10:12] = bytes([0x00, 0x00])                                            # reserved
-    header[12:14] = ((st_offset + len(st_data) - 14 + 0x100) & 0xFFFF).to_bytes(2, 'little')  # END
+    bias = lambda off: ((off - 14 + 0x100) & 0xFFFF).to_bytes(2, 'little')
+    header[0:2]   = bytes([0x00, 0x00])                    # LOMEM
+    header[2:4]   = bias(vnt_offset)                       # VNTP  (0x0100)
+    header[4:6]   = bias(vntd_offset)                      # VNTD
+    header[6:8]   = bias(vvt_offset)                       # VVTP
+    header[8:10]  = bias(st_offset)                        # STMTAB
+    header[10:12] = bias(stmcur_offset)                    # STMCUR
+    header[12:14] = bias(st_offset + len(st_data))         # STARP
 
     result.extend(header)
     result.extend(vnt_data)
@@ -1701,9 +1729,8 @@ def load_file_LST(inpath, outfile=None):
         if not line_bytes.strip():
             continue
 
-        # Strip null bytes and control characters (0, 1) from ATASCII LST files
-        if newline_type == 'atascii':
-            line_bytes = bytes(b for b in line_bytes if b not in (0, 1))
+        # NOTE: do not strip $00/$01 here. They are ordinary ATASCII
+        # characters (heart, left-tee) and appear inside string literals.
 
         # Skip host comment lines. ';' and '#' are the modern markers; '.'
         # appears in legacy ULST files, where an unnumbered line was a bare

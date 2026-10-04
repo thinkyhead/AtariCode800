@@ -637,14 +637,13 @@ class Syntaxer:
         while self.index < len(self.lbuff):
             b = self.lbuff[self.index]
 
-            # End of string marker ($9B) or closing quote ends the string
+            # End of string marker ($9B) or closing quote ends the string.
+            # Every other byte is literal -- including $00 and $01 (ATASCII
+            # heart and left-tee), which programs use for graphics and for
+            # machine code in strings. The ROM's string scan (_TSCON) has no
+            # exceptions; skipping them truncated HOPPERG's strings.
             if b == 0x9B or chr(b) == '"':
                 break
-
-            # Skip null bytes and control characters (0, 1)
-            if b in (0, 1):
-                self.index += 1
-                continue
 
             chars.append(b)
             self.index += 1
