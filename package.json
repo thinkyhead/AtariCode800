@@ -31,6 +31,11 @@
       "type": "object",
       "title": "AtariCode800",
       "properties": {
+        "ataricode800.highlightInvalid": {
+          "type": "boolean",
+          "default": true,
+          "description": "Paint a background behind Atari BASIC syntax errors (invalid.error) and dead code (invalid.warning). Themes cannot set token backgrounds, so this uses editor decorations."
+        },
         "ataricode800.atasciiFont": {
           "type": "string",
           "default": "AtariClassic-Regular, 'Atari Classic', 'EightBit Atari', monospace",
@@ -368,11 +373,13 @@
       }
     ]
   },
+  "dependencies": {
+    "vscode-oniguruma": "^1.7.0",
+    "vscode-textmate": "^9.0.0"
+  },
   "devDependencies": {
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.75.0",
-    "vscode-oniguruma": "^1.7.0",
-    "vscode-textmate": "^9.0.0",
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "bugs": {
@@ -380,7 +387,7 @@
   },
   "homepage": "https://github.com/thinkyhead/AtariCode800#readme",
   "scripts": {
-    "test": "node test/smoke.js && node test/tokenize.js",
+    "test": "node test/smoke.js && node test/tokenize.js && node test/invalid.js",
     "smoke": "node test/smoke.js",
     "tokenize": "node test/tokenize.js",
     "sync": "tools/sync_tokenizer.sh",

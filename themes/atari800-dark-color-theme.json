@@ -108,21 +108,27 @@
       "name": "Invalid",
       "scope": "invalid.warning",
       "settings": {
-        "background": "#6b4317"
+        "background": "#6b4317",
+        "foreground": "#e0a050",
+        "fontStyle": "underline"
       }
     },
     {
       "name": "Invalid",
       "scope": "invalid.error",
       "settings": {
-        "background": "#700005"
+        "background": "#700005",
+        "foreground": "#ff5060",
+        "fontStyle": "underline"
       }
     },
     {
       "name": "Invalid",
       "scope": "invalid",
       "settings": {
-        "background": "#700005"
+        "background": "#700005",
+        "foreground": "#ff5060",
+        "fontStyle": "underline"
       }
     },
     {

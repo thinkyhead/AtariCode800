@@ -13,6 +13,7 @@ const asm = require('./asm');
 const inspector = require('./inspector');
 const atascii = require('./atascii');
 const download = require('./download');
+const invalid = require('./invalid');
 
 /** Build/Run dispatch on the active document's language.
  *  BASIC goes through the Python tokenizer; asm and C go to the cc65 tools. */
@@ -31,6 +32,7 @@ function activate(context) {
   reg('ataricode800.gotBasic', () => download.gotBasic(context));
 
   atascii.register(context);
+  invalid.register(context);
 
   // Keep an open Inspector in sync with edits to the active .LST.
   sub.push(vscode.workspace.onDidSaveTextDocument((doc) => {

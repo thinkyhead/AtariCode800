@@ -14,7 +14,10 @@
 test/**
 tools/**
 EXTENSION.md
+# node_modules: everything but the runtime deps of src/invalid.js
 node_modules/**
+!node_modules/vscode-textmate/**
+!node_modules/vscode-oniguruma/**
 jsconfig.json
 
 # Caches and build leftovers
