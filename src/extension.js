@@ -28,7 +28,9 @@ function activate(context) {
 
   reg('ataricode800.build', () => (isBasic() ? basic.buildCurrent(context) : asm.build()));
   reg('ataricode800.run', () => (isBasic() ? basic.runCurrent(context) : asm.buildAndRun()));
+  reg('ataricode800.runBas', () => basic.runBasCurrent(context));
   reg('ataricode800.inspect', () => inspector.open(context));
+  inspector.register(context);
   reg('ataricode800.gotBasic', () => download.gotBasic(context));
 
   atascii.register(context);

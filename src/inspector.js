@@ -19,6 +19,11 @@ const basic = require('./basic');
 
 let panel = null;
 let currentFile = null;
+let lastBasicDoc = null;   // most recently focused BASIC editor's document
+
+function trackActive(ed) {
+  if (ed && ed.document.languageId === 'ataribasic') lastBasicDoc = ed.document;
+}
 
 function esc(s) {
   return String(s === undefined || s === null ? '' : s)
@@ -78,9 +83,14 @@ function render(data, fileName) {
   .error { color: var(--vscode-errorForeground, #f14c4c);
            border: 1px solid currentColor; padding: 6px 8px; margin: 10px 0; }
   label { user-select: none; cursor: pointer; }
+  button { font: inherit; margin-right: 12px; padding: 2px 10px; cursor: pointer;
+           color: var(--vscode-button-foreground);
+           background: var(--vscode-button-background); border: none; }
+  button:hover { background: var(--vscode-button-hoverBackground); }
 </style></head>
 <body>
   <div class="bar">
+    <button id="tokenize" title="Re-open the Inspector for the most recently focused BASIC tab">Tokenize</button>
     <label><input type="checkbox" id="compact" ${compact ? 'checked' : ''}>
       Compact listing</label>
     <div class="file">${esc(fileName)}</div>
@@ -109,6 +119,8 @@ function render(data, fileName) {
     document.getElementById('listing').textContent = box.checked ? abbr : full;
     vscodeApi.postMessage({ type: 'compact', value: box.checked });
   });
+  document.getElementById('tokenize').addEventListener('click',
+    () => vscodeApi.postMessage({ type: 'tokenize' }));
 </script>
 </body></html>`;
 }
@@ -128,14 +140,17 @@ async function update(context, doc) {
   }
 }
 
-async function open(context) {
+async function open(context, docArg) {
   const ed = vscode.window.activeTextEditor;
-  if (!ed || ed.document.languageId !== 'ataribasic') {
+  trackActive(ed);
+  const doc = docArg ||
+    (ed && ed.document.languageId === 'ataribasic' ? ed.document : null);
+  if (!doc) {
     vscode.window.showErrorMessage(
       'AtariCode800: open an Atari BASIC .LST/.ULST file first.');
     return;
   }
-  if (ed.document.isDirty) await ed.document.save();
+  if (doc.isDirty) await doc.save();
 
   if (!panel) {
     panel = vscode.window.createWebviewPanel(
@@ -149,11 +164,32 @@ async function open(context) {
       if (msg && msg.type === 'compact') {
         vscode.workspace.getConfiguration('ataricode800')
           .update('compactListing', msg.value, true);
+      } else if (msg && msg.type === 'tokenize') {
+        retokenize(context);
       }
     }, null, context.subscriptions);
   }
   panel.reveal(vscode.ViewColumn.Beside, true);
-  await update(context, ed.document);
+  await update(context, doc);
+}
+
+/** Tokenize button: close the Inspector and re-open it for the most
+ *  recently focused BASIC tab (the panel itself has focus on click). */
+async function retokenize(context) {
+  const doc = (lastBasicDoc && !lastBasicDoc.isClosed) ? lastBasicDoc
+    : (vscode.window.visibleTextEditors.map((e) => e.document)
+      .find((d) => d.languageId === 'ataribasic') || null);
+  if (!doc) {
+    vscode.window.showErrorMessage('AtariCode800: no open Atari BASIC tab to tokenize.');
+    return;
+  }
+  if (panel) panel.dispose();
+  await open(context, doc);
+}
+
+function register(context) {
+  trackActive(vscode.window.activeTextEditor);
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(trackActive));
 }
 
 function refreshIfOpen(context, doc) {
@@ -162,4 +198,4 @@ function refreshIfOpen(context, doc) {
   }
 }
 
-module.exports = { open, refreshIfOpen };
+module.exports = { open, refreshIfOpen, register };

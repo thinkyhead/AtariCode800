@@ -97,7 +97,12 @@
         "ataricode800.hardDrivePath": {
           "type": "string",
           "default": "",
-          "description": "H: device directory the emulator reads. Built .BAS files are staged here."
+          "description": "H: device directory the emulator reads. Used only when \"Stage LST/BAS on Hard Drive\" is on; empty means output goes beside the source file."
+        },
+        "ataricode800.stageOnHardDrive": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Stage LST/BAS on Hard Drive: write built `.BAS` files and converted `.LST` listings to `#ataricode800.hardDrivePath#`. Off (or an empty path) writes them beside the source file."
         },
         "ataricode800.ld65Path": {
           "type": "string",
@@ -121,8 +126,8 @@
         },
         "ataricode800.turbo": {
           "type": "boolean",
-          "default": true,
-          "description": "Run the emulator with -turbo."
+          "default": false,
+          "description": "Run the emulator with -turbo (full speed, no frame limit)."
         }
       }
     },
@@ -136,8 +141,14 @@
       {
         "category": "AtariCode800",
         "command": "ataricode800.run",
-        "title": "Build and Run in atari800",
+        "title": "Build LST and Run in atari800",
         "icon": "$(play)"
+      },
+      {
+        "category": "AtariCode800",
+        "command": "ataricode800.runBas",
+        "title": "Build BAS and Run in atari800",
+        "icon": "$(run-all)"
       },
       {
         "category": "AtariCode800",
@@ -183,6 +194,11 @@
           "command": "ataricode800.run",
           "when": "resourceLangId == ataribasic",
           "group": "navigation@2"
+        },
+        {
+          "command": "ataricode800.runBas",
+          "when": "resourceLangId == ataribasic",
+          "group": "navigation@3"
         }
       ],
       "commandPalette": [
@@ -192,6 +208,10 @@
         },
         {
           "command": "ataricode800.run",
+          "when": "resourceLangId == ataribasic"
+        },
+        {
+          "command": "ataricode800.runBas",
           "when": "resourceLangId == ataribasic"
         },
         {

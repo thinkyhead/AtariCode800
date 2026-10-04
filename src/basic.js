@@ -85,16 +85,26 @@ function activeLst() {
   return ed.document;
 }
 
-/** Where the built .BAS should go: the configured H: dir, else alongside the source. */
+/**
+ * The H: staging directory, or null when output belongs beside the source:
+ * the "Stage LST/BAS on Hard Drive" option is off, the path is empty, or the
+ * directory does not exist.
+ */
+function stagingDir() {
+  if (!config().get('stageOnHardDrive', false)) return null;
+  const hd = (config().get('hardDrivePath', '') || '').trim();
+  return hd && fs.existsSync(hd) ? hd : null;
+}
+
+/** Where the built .BAS should go: the H: staging dir, else beside the source. */
 function outputPathFor(doc) {
   const name = path.basename(doc.fileName).replace(/\.[^.]*$/, '');
   const atariName = name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'PROGRAM';
-  const hd = config().get('hardDrivePath', '');
-  const dir = hd && fs.existsSync(hd) ? hd : path.dirname(doc.fileName);
+  const dir = stagingDir() || path.dirname(doc.fileName);
   return path.join(dir, atariName + '.BAS');
 }
 
-async function buildCurrent(context) {
+async function buildCurrent(context, { quiet = false } = {}) {
   const doc = activeLst();
   if (!doc) return null;
   if (doc.isDirty) await doc.save();
@@ -102,14 +112,23 @@ async function buildCurrent(context) {
   const out = outputPathFor(doc);
   const r = await runTool(context, [doc.fileName, '-o', out]);
 
-  if (r.code !== 0) {
+  if (r.code !== 0 || !fs.existsSync(out)) {
     vscode.window.showErrorMessage(
-      `AtariCode800 build failed: ${(r.stderr || r.stdout).trim().split('\n').pop()}`);
+      `AtariCode800 build failed: ${(r.stderr || r.stdout || 'no output written').trim().split('\n').pop()}`);
     return null;
   }
-  const size = fs.existsSync(out) ? fs.statSync(out).size : 0;
-  vscode.window.setStatusBarMessage(
-    `AtariCode800: built ${path.basename(out)} (${size} bytes)`, 5000);
+  const size = fs.statSync(out).size;
+  if (!quiet) {
+    const where = path.dirname(out) === path.dirname(doc.fileName)
+      ? 'beside the source' : `in ${path.dirname(out)}`;
+    vscode.window.showInformationMessage(
+      `AtariCode800: created ${path.basename(out)} (${size} bytes) ${where}.`,
+      'Reveal').then((pick) => {
+      if (pick === 'Reveal') {
+        vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(out));
+      }
+    });
+  }
   return out;
 }
 
@@ -129,6 +148,11 @@ function atasciiToolPath(context) {
 function stageAtascii(context, doc, hdDir) {
   const base = path.basename(doc.fileName).replace(/\.(ulst|lst|ataribas\w*)$/i, '');
   const staged = path.join(hdDir, `${base.toUpperCase().slice(0, 8)}.LST`);
+  // Never overwrite the source itself (FOO.lst vs FOO.LST on a
+  // case-insensitive volume when converting beside the source).
+  if (path.resolve(staged).toLowerCase() === path.resolve(doc.fileName).toLowerCase()) {
+    return doc.fileName;
+  }
 
   const r = cp.spawnSync(config().get('pythonPath', 'python3'),
     ['-B', atasciiToolPath(context), '-s', '-u', doc.fileName],
@@ -149,34 +173,42 @@ async function runCurrent(context) {
   if (!doc) return;
   if (doc.isDirty) await doc.save();
 
-  const emu = config().get('emulatorPath', 'atari800');
-  const model = config().get('emulatorModel', '-atari');
-  const hd = config().get('hardDrivePath', '');
+  const hd = stagingDir();
 
-  // The Atari speaks ATASCII, not Unicode. When an H: drive is configured,
-  // stage a converted .LST there (mirroring helper/AtariBASIC-run.sh) so a
-  // .ULST runs correctly; otherwise fall back to running the file as-is,
-  // which is only right for a listing that is already ATASCII.
+  // The Atari speaks ATASCII, not Unicode, so a .ULST is converted to an
+  // ATASCII .LST first (mirroring helper/AtariBASIC-run.sh): into the H:
+  // staging dir when staging is on, otherwise beside the source. An ATASCII
+  // .LST runs as-is unless it is being staged.
   let target = doc.fileName;
-  if (hd && fs.existsSync(hd)) {
-    const staged = stageAtascii(context, doc, hd);
+  const isUnicode = /\.ulst$/i.test(doc.fileName);
+  if (hd || isUnicode) {
+    const staged = stageAtascii(context, doc, hd || path.dirname(doc.fileName));
     if (!staged) return;
     target = staged;
-  } else if (/\.ulst$/i.test(doc.fileName)) {
-    vscode.window.showWarningMessage(
-      'AtariCode800: set ataricode800.hardDrivePath so .ULST can be converted ' +
-      'to ATASCII before running.');
-    return;
   }
 
+  launch(target);
+}
+
+/** Launch atari800 with BASIC enabled, running `target` (.LST or .BAS). */
+function launch(target) {
+  const emu = config().get('emulatorPath', 'atari800');
+  const model = config().get('emulatorModel', '-atari');
   const args = [];
-  if (config().get('turbo', true)) args.push('-turbo');
+  if (config().get('turbo', false)) args.push('-turbo');
   if (model) args.push(model);
   args.push('-basic', '-run', target);
-
   const term = vscode.window.createTerminal({ name: 'atari800' });
   term.sendText(`${emu} ${args.map((a) => `'${a}'`).join(' ')}`);
   term.show(true);
 }
 
-module.exports = { buildCurrent, runCurrent, inspectFile, basicToolPath };
+/** ULST/LST -> tokenized .BAS (H: staging dir or beside the source), then run it. */
+async function runBasCurrent(context) {
+  const out = await buildCurrent(context, { quiet: true });
+  if (!out) return;
+  vscode.window.setStatusBarMessage(`AtariCode800: running ${path.basename(out)}`, 5000);
+  launch(out);
+}
+
+module.exports = { buildCurrent, runCurrent, runBasCurrent, inspectFile, basicToolPath };
