@@ -82,3 +82,9 @@
 
 200 ON PEEK(1) GOTO 5
 #              ^^^^ keyword.on-goto.ataribasic
+
+210 IF J1/N8=INT(J1/N8) THEN 1000
+#                       ^^^^ keyword.then.ataribasic
+
+220 A=PEEK(1) * 2
+#             ^ keyword.operator.math.ataribasic

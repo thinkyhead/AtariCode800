@@ -567,7 +567,9 @@ class Converter:
                 # statement, so they must close us, not keep us open.
                 outer += [p for p in self.start_patterns(d, pops=False)]
             if outer:
-                end_rx = '(?!\\G)(?<=\\S)(?!%s)|%s' % (
+                # \s*: a blank between ')' and the operator/THEN must not
+                # close the region (`IF A=INT(B) THEN 5` flagged THEN).
+                end_rx = '(?!\\G)(?<=\\S)(?!\\s*(?:%s))|%s' % (
                     '|'.join('(?:%s)' % p for p in outer), end_rx)
 
         region = {'begin': match_rx, 'end': end_rx}
