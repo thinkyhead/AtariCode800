@@ -311,89 +311,29 @@ def search_statement_name_table(lbuff:bytes, index:int):
         return best_cmd_idx, best_new_index
     return kILET, index
 
+# (token, uppercase-ASCII name) for every non-empty entry, in table order.
+# Leading blanks in the table (' GOTO', ' THEN', ...) are layout only; the
+# original matcher stripped them too.
+_OP_NAMES = tuple((t, c.strip().encode('ascii'))
+                  for t, c in enumerate(ops_and_funcs) if c.strip())
+
 def search_operator_name_table(lbuff:bytes, index:int):
     """
-    Search ops_and_funcs for the string at lbuff + index.
-    Return the operator ID and the following index.
-    On fail return None.
+    Search ops_and_funcs for the operator/function name starting EXACTLY at
+    lbuff[index] (case-insensitive). Return (token, index_after_name), or
+    (None, index) when nothing matches. The first match in table order wins.
 
-    Parameters
-    ----------
-    lbuff : bytes
-        The complete input buffer (bytes).
-    index : int
-        Current position in lbuff from which to start the search.
-
-    Returns
-    -------
-    tuple[int, int]
-        (operator_token, new_index)
-        * operator_token – index in ops_and_funcs or None
-        * new_index  – position after the matched command name
+    Same results as _search_operator_name_table_slow, which scanned the whole
+    rest of the line for every table entry and then kept only a match at
+    `index` -- O(ops x line^2) per call, ~99% of tokenizing time (HOPPERG:
+    ~30 s). This compares each name once with a C-level startswith.
     """
-
-    import sys
-    # print(f"DEBUG search_operator_name_table: index={index}, lbuff[{index}:{index+20}]={lbuff[index:index+20]}", file=sys.stderr)
-
-    # Check if the current character matches any operator/function name
-    # If not, return None immediately (this handles digits and other non-operator characters)
-    if index < len(lbuff):
-        current_char = chr(lbuff[index]).upper()
-        for t, c in enumerate(ops_and_funcs):
-            opname = c.strip().upper()
-            if len(opname) > 0 and opname[0] == current_char:
-                # Current character matches the first character of an operator/function
-                break
-        else:
-            # No operator/function starts with the current character
-            return None, index
-
-    # Go through the entire ops_and_funcs table (not just from cSROP)
-    best_match = None  # (token, scan_pos, ipos) of the closest match
-
-    for t, c in enumerate(ops_and_funcs):  # Changed: removed [cSROP:] to search entire table
-        opname = c.strip()
-        oplen = len(opname)
-
-        # Scan forward from index to find this operator
-        scan_pos = index
-        while scan_pos < len(lbuff):
-            # Skip spaces before trying to match
-            if lbuff[scan_pos] in (ord(' '), ord('\t')):
-                scan_pos += 1
-                continue
-
-            # Try to match the operator starting at scan_pos
-            ipos = scan_pos
-            cpos = 0
-            got = False
-            while ipos < len(lbuff):
-                ch = chr(lbuff[ipos])       # one char from the input as str
-                if cpos < oplen and ch.upper() != opname[cpos:cpos+1]: # Mismatch?
-                    break                     # Go to next position in scan
-                ipos += 1                     # Next input index
-                cpos += 1                     # Next compare index
-                if cpos == oplen:             # Got the whole command?
-                    got = True
-
-                if got:
-                    # Found a match - check if it's the closest one
-                    # Only update if this is the first match (scan_pos < best_match[1])
-                    # This ensures we return the earliest matching operator, not the last
-                    if best_match is None or scan_pos < best_match[1]:
-                        best_match = (t, scan_pos, ipos)
-                    # Don't update if scan_pos == best_match[1] - keep the first match found
-                    # Also, only accept matches that start at or after the current index
-                    if scan_pos >= index:
-                        break
-
-            scan_pos += 1                   # Try matching from next position
-
-    if best_match:
-        t, scan_pos, ipos = best_match
-        # Only return matches that start EXACTLY at the current index (not later)
-        if scan_pos == index:
-            if DEBUG_CODE: print(f"DEBUG search_operator_name_table: Found match at scan_pos={scan_pos}, token={t}, opname='{ops_and_funcs[t]}'")
-            return t, ipos
-
+    if index >= len(lbuff):
+        return None, index
+    # Only ASCII letters change under upper(), and every name is ASCII, so
+    # bytes.upper() equals the old per-char chr().upper() comparison.
+    up = bytes(lbuff[index:index + 8]).upper()     # longest name is 7 chars
+    for t, name in _OP_NAMES:
+        if up.startswith(name):
+            return t, index + len(name)
     return None, index
