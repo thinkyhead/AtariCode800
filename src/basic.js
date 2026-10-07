@@ -104,32 +104,50 @@ function outputPathFor(doc) {
   return path.join(dir, atariName + '.BAS');
 }
 
+/** Builds in flight, keyed by source path: a second build of the same file
+ *  while one is running is ignored (it would race on the same output). */
+const building = new Set();
+
 async function buildCurrent(context, { quiet = false } = {}) {
   const doc = activeLst();
   if (!doc) return null;
-  if (doc.isDirty) await doc.save();
-
-  const out = outputPathFor(doc);
-  const r = await runTool(context, [doc.fileName, '-o', out]);
-
-  if (r.code !== 0 || !fs.existsSync(out)) {
-    vscode.window.showErrorMessage(
-      `AtariCode800 build failed: ${(r.stderr || r.stdout || 'no output written').trim().split('\n').pop()}`);
+  const key = doc.fileName;
+  if (building.has(key)) {
+    vscode.window.setStatusBarMessage(
+      `AtariCode800: ${path.basename(key)} is already building`, 3000);
     return null;
   }
-  const size = fs.statSync(out).size;
-  if (!quiet) {
-    const where = path.dirname(out) === path.dirname(doc.fileName)
-      ? 'beside the source' : `in ${path.dirname(out)}`;
-    vscode.window.showInformationMessage(
-      `AtariCode800: created ${path.basename(out)} (${size} bytes) ${where}.`,
-      'Reveal').then((pick) => {
-      if (pick === 'Reveal') {
-        vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(out));
-      }
-    });
+  building.add(key);
+  try {
+    if (doc.isDirty) await doc.save();
+    const out = outputPathFor(doc);
+    // Animated progress while basic.py runs (status bar spinner + toast).
+    const r = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: `AtariCode800: tokenizing ${path.basename(doc.fileName)} \u2192 ${path.basename(out)}\u2026`,
+    }, () => runTool(context, [doc.fileName, '-o', out]));
+
+    if (r.code !== 0 || !fs.existsSync(out)) {
+      vscode.window.showErrorMessage(
+        `AtariCode800 build failed: ${(r.stderr || r.stdout || 'no output written').trim().split('\n').pop()}`);
+      return null;
+    }
+    const size = fs.statSync(out).size;
+    if (!quiet) {
+      const where = path.dirname(out) === path.dirname(doc.fileName)
+        ? 'beside the source' : `in ${path.dirname(out)}`;
+      vscode.window.showInformationMessage(
+        `AtariCode800: created ${path.basename(out)} (${size} bytes) ${where}.`,
+        'Reveal').then((pick) => {
+        if (pick === 'Reveal') {
+          vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(out));
+        }
+      });
+    }
+    return out;
+  } finally {
+    building.delete(key);
   }
-  return out;
 }
 
 /** Path to the ATASCII converter that sits beside basic.py. */

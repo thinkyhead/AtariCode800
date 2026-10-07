@@ -87,8 +87,15 @@ function render(data, fileName) {
            color: var(--vscode-button-foreground);
            background: var(--vscode-button-background); border: none; }
   button:hover { background: var(--vscode-button-hoverBackground); }
+  button:disabled { opacity: .5; cursor: default; }
+  ${SPIN_CSS}
+  #overlay { display: none; position: fixed; inset: 0; z-index: 10;
+             align-items: center; justify-content: center; gap: 12px;
+             background: color-mix(in srgb, var(--vscode-editor-background) 75%, transparent); }
 </style></head>
 <body>
+  <div id="overlay"><div class="spin"></div>
+    <div>Tokenizing <b id="busyfile"></b>\u2026</div></div>
   <div class="bar">
     <button id="tokenize" title="Re-open the Inspector for the most recently focused BASIC tab">Tokenize</button>
     <label><input type="checkbox" id="compact" ${compact ? 'checked' : ''}>
@@ -121,22 +128,65 @@ function render(data, fileName) {
   });
   document.getElementById('tokenize').addEventListener('click',
     () => vscodeApi.postMessage({ type: 'tokenize' }));
+  // Re-tokenize in progress: dim the content and show a spinner over it.
+  window.addEventListener('message', (ev) => {
+    if (ev.data && ev.data.type === 'busy') {
+      document.getElementById('overlay').style.display = 'flex';
+      document.getElementById('busyfile').textContent = ev.data.file || '';
+      document.getElementById('tokenize').disabled = true;
+    }
+  });
 </script>
 </body></html>`;
 }
 
+const SPIN_CSS = `
+  .spin { width: 28px; height: 28px; border-radius: 50%;
+          border: 3px solid var(--vscode-editorWidget-border, #555);
+          border-top-color: var(--vscode-progressBar-background, #0e70c0);
+          animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .busy { display: flex; align-items: center; gap: 12px; }`;
+
+/** Shown while basic.py runs for a panel with nothing to show yet. */
+function busyHtml(fileName) {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+  body { font-family: var(--vscode-editor-font-family, monospace);
+         color: var(--vscode-editor-foreground); padding: 24px; }
+  ${SPIN_CSS}
+</style></head><body>
+  <div class="busy"><div class="spin"></div>
+    <div>Tokenizing <b>${esc(fileName)}</b>\u2026</div></div>
+</body></html>`;
+}
+
+let updating = null;   // file currently being tokenized for the panel
+
 async function update(context, doc) {
   if (!panel) return;
+  if (updating === doc.fileName) return;        // same file already in flight
+  updating = doc.fileName;
+  const name = path.basename(doc.fileName);
+  if (currentFile) {
+    panel.webview.postMessage({ type: 'busy', file: name });   // overlay
+  } else {
+    panel.webview.html = busyHtml(name);
+  }
   try {
     const data = await basic.inspectFile(context, doc.fileName);
+    if (!panel) return;
     currentFile = doc.fileName;
-    panel.webview.html = render(data, path.basename(doc.fileName));
+    panel.webview.html = render(data, name);
   } catch (e) {
+    if (!panel) return;
+    currentFile = null;
     panel.webview.html =
       `<body style="font-family:monospace;padding:16px">
          <h3>AtariCode800 Inspector</h3>
          <pre style="color:#f14c4c;white-space:pre-wrap">${esc(e.message)}</pre>
        </body>`;
+  } finally {
+    updating = null;
   }
 }
 
@@ -157,7 +207,7 @@ async function open(context, docArg) {
       'ataricode800.inspector', 'BASIC Inspector',
       vscode.ViewColumn.Beside, { enableScripts: true, retainContextWhenHidden: true });
 
-    panel.onDidDispose(() => { panel = null; currentFile = null; },
+    panel.onDidDispose(() => { panel = null; currentFile = null; updating = null; },
       null, context.subscriptions);
 
     panel.webview.onDidReceiveMessage((msg) => {
